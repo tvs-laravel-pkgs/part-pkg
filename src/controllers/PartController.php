@@ -3,6 +3,7 @@
 namespace Abs\PartPkg;
 use App\Http\Controllers\Controller;
 use App\Part;
+use App\Uom;
 use Auth;
 use Carbon\Carbon;
 use DB;
@@ -19,7 +20,6 @@ class PartController extends Controller {
 
 	public function getPartList(Request $request) {
 		$parts = Part::withTrashed()
-
 			->select([
 				'parts.id',
 				'parts.name',
@@ -29,6 +29,11 @@ class PartController extends Controller {
 			])
 			->where('parts.company_id', Auth::user()->company_id)
 
+			->where(function ($query) use ($request) {
+				if (!empty($request->code)) {
+					$query->where('parts.code', 'LIKE', '%' . $request->code . '%');
+				}
+			})
 			->where(function ($query) use ($request) {
 				if (!empty($request->name)) {
 					$query->where('parts.name', 'LIKE', '%' . $request->name . '%');
@@ -44,10 +49,10 @@ class PartController extends Controller {
 		;
 
 		return Datatables::of($parts)
-			->rawColumns(['name', 'action'])
-			->addColumn('name', function ($part) {
+			->rawColumns(['name', 'action','status'])
+			->addColumn('status', function ($part) {
 				$status = $part->status == 'Active' ? 'green' : 'red';
-				return '<span class="status-indicator ' . $status . '"></span>' . $part->name;
+				return '<span class="status-indicator ' . $status . '"></span>' . $part->status;
 			})
 			->addColumn('action', function ($part) {
 				$img1 = asset('public/themes/' . $this->data['theme'] . '/img/content/table/edit-yellow.svg');
@@ -78,6 +83,10 @@ class PartController extends Controller {
 		$this->data['success'] = true;
 		$this->data['part'] = $part;
 		$this->data['action'] = $action;
+		$this->data['extras'] = [
+			'uom_list' => Uom::getList(),
+			'tax_code_list' => TaxCode::getList(),
+		];
 		return response()->json($this->data);
 	}
 
@@ -85,10 +94,10 @@ class PartController extends Controller {
 		// dd($request->all());
 		try {
 			$error_messages = [
-				'code.required' => 'Short Name is Required',
-				'code.unique' => 'Short Name is already taken',
-				'code.min' => 'Short Name is Minimum 3 Charachers',
-				'code.max' => 'Short Name is Maximum 32 Charachers',
+				'code.required' => 'Code is Required',
+				'code.unique' => 'Code is already taken',
+				'code.min' => 'Code is Minimum 3 Charachers',
+				'code.max' => 'Code is Maximum 32 Charachers',
 				'name.required' => 'Name is Required',
 				'name.unique' => 'Name is already taken',
 				'name.min' => 'Name is Minimum 3 Charachers',

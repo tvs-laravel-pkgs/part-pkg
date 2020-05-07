@@ -1,6 +1,6 @@
 <?php
 
-Route::group(['middleware' => ['web', 'auth'], 'prefix' => 'part-pkg'], function () {
+Route::group(['namespace' => 'Abs\PartPkg','middleware' => ['web', 'auth'], 'prefix' => 'part-pkg'], function () {
 
 	
 		//Part
