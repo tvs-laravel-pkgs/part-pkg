@@ -4,6 +4,7 @@ namespace Abs\PartPkg;
 use App\Http\Controllers\Controller;
 use App\Part;
 use App\Uom;
+use Abs\GigoPkg\TaxCode;
 use Auth;
 use Carbon\Carbon;
 use DB;
@@ -24,21 +25,40 @@ class PartController extends Controller {
 				'parts.id',
 				'parts.name',
 				'parts.code',
-
+				'parts.rate',
+				'uoms.name as uom',
+				'tax_codes.code as tax_code',
 				DB::raw('IF(parts.deleted_at IS NULL, "Active","Inactive") as status'),
 			])
+			->join('uoms','uoms.id','parts.uom_id')
+			->join('tax_codes','tax_codes.id','parts.tax_code_id')
 			->where('parts.company_id', Auth::user()->company_id)
 
 			->where(function ($query) use ($request) {
 				if (!empty($request->code)) {
+					//dd('code');
 					$query->where('parts.code', 'LIKE', '%' . $request->code . '%');
 				}
 			})
 			->where(function ($query) use ($request) {
 				if (!empty($request->name)) {
+					//dd('name');
 					$query->where('parts.name', 'LIKE', '%' . $request->name . '%');
 				}
 			})
+			->where(function ($query) use ($request) {
+				if (!empty($request->uom_filter_id)) {
+					//dd('uom_id');
+					$query->where('uoms.id', $request->uom_filter_id);
+				}
+			})
+			->where(function ($query) use ($request) {
+				if (!empty($request->tax_code_filter_id)) {
+					//dd('tax_codes');
+					$query->where('tax_codes.id', $request->tax_code_filter_id);
+				}
+			})
+
 			->where(function ($query) use ($request) {
 				if ($request->status == '1') {
 					$query->whereNull('parts.deleted_at');
@@ -89,9 +109,22 @@ class PartController extends Controller {
 		];
 		return response()->json($this->data);
 	}
+	public function getPartFilterData() {
+		$this->data['extras'] = [
+			'uom_list' => Uom::getList(),
+			'tax_code_list' => TaxCode::getList(),
+			'status' => [
+				['id' => '', 'name' => 'Select Status'],
+				['id' => '1', 'name' => 'Active'],
+				['id' => '0', 'name' => 'Inactive'],
+			],
+		];
+		return response()->json($this->data);
+	}
+
 
 	public function savePart(Request $request) {
-		// dd($request->all());
+		//dd($request->all());
 		try {
 			$error_messages = [
 				'code.required' => 'Code is Required',
@@ -102,6 +135,7 @@ class PartController extends Controller {
 				'name.unique' => 'Name is already taken',
 				'name.min' => 'Name is Minimum 3 Charachers',
 				'name.max' => 'Name is Maximum 191 Charachers',
+				'rate.required' => 'Rate is Required',
 			];
 			$validator = Validator::make($request->all(), [
 				'code' => [
@@ -116,6 +150,18 @@ class PartController extends Controller {
 					'max:191',
 					'unique:parts,name,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
 				],
+				'tax_code' => [
+					'nullable',
+					'exists:tax_codes,id',
+				],
+				'uom_id' => [
+					'nullable',
+					'exists:uoms,id',
+				],
+				'rate' => [
+					'required:true',
+					'numeric',
+				],
 			], $error_messages);
 			if ($validator->fails()) {
 				return response()->json(['success' => false, 'errors' => $validator->errors()->all()]);
@@ -125,14 +171,18 @@ class PartController extends Controller {
 			if (!$request->id) {
 				$part = new Part;
 				$part->company_id = Auth::user()->company_id;
+				$part->created_by_id = Auth::user()->id;
 			} else {
 				$part = Part::withTrashed()->find($request->id);
+				$part->updated_by_id = Auth::user()->id;
 			}
 			$part->fill($request->all());
 			if ($request->status == 'Inactive') {
 				$part->deleted_at = Carbon::now();
+				$part->deleted_by_id = Auth::user()->id;
 			} else {
 				$part->deleted_at = NULL;
+				$part->deleted_by_id =NULL;
 			}
 			$part->save();
 

@@ -49,7 +49,9 @@ app.component('partList', {
                 data: function(d) {
                     d.code = $("#code").val();
                     d.name = $("#name").val();
-                    d.description = $("#description").val();
+                    d.uom_filter_id = $("#uom_filter_id").val();
+                    // alert($("#uom_filter_id").val());
+                    d.tax_code_filter_id = $("#tax_code_filter_id").val();
                     d.status = $("#status").val();
                 },
             },
@@ -58,7 +60,9 @@ app.component('partList', {
                 { data: 'action', class: 'action', name: 'action', searchable: false },
                 { data: 'code', name: 'parts.code' },
                 { data: 'name', name: 'parts.name' },
-                { data: 'description', name: 'parts.description' },
+                { data: 'uom', name: 'uoms.name' },
+                { data: 'tax_code', name: 'tax_codes.code' },
+                { data: 'rate', name: 'parts.rate' },
                 { data: 'status', name: '' },
 
             ],
@@ -108,7 +112,7 @@ app.component('partList', {
 
         // FOR FILTER
         $http.get(
-            laravel_routes['getPartFilter']
+            laravel_routes['getPartFilterData']
         ).then(function(response) {
             // console.log(response);
             self.extras = response.data.extras;
@@ -129,25 +133,36 @@ app.component('partList', {
             }
         });
         $('#code').on('keyup', function() {
-           // dataTables.fnFilter();
+            // dataTables.fnFilter();
         });
         $('#name').on('keyup', function() {
-           // dataTables.fnFilter();
+            // dataTables.fnFilter();
         });
         $scope.onSelectedStatus = function(id) {
             $('#status').val(id);
             //dataTables.fnFilter();
         }
+        $scope.onSelectedUom = function(id) {
+            $('#uom_filter_id').val(id);
+            //dataTables.fnFilter();
+        }
+        $scope.onSelectedTaxCode = function(id) {
+            $('#tax_code_filter_id').val(id);
+            //dataTables.fnFilter();
+        }
+
         $scope.reset_filter = function() {
             $("#code").val('');
             $("#name").val('');
             $("#status").val('');
+            $('#uom_filter_id').val('');
+            $('#tax_code_filter_id').val('');
             //dataTables.fnFilter();
         }
         $scope.apply_filter = function() {
             dataTables.fnFilter();
         }
-        
+
         $rootScope.loading = false;
     }
 });
@@ -173,6 +188,8 @@ app.component('partForm', {
             }
         ).then(function(response) {
             self.part = response.data.part;
+            self.extras = response.data.extras;
+            console.log(self.part);
             self.action = response.data.action;
             $rootScope.loading = false;
             if (self.action == 'Edit') {
@@ -203,7 +220,7 @@ app.component('partForm', {
                 },
                 'rate': {
                     required: true,
-                    number:true,
+                    number: true,
                 }
             },
             messages: {
