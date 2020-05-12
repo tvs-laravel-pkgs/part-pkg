@@ -24,6 +24,14 @@ class Part extends Model {
 	public function setDateOfJoinAttribute($date) {
 		return $this->attributes['date_of_join'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
 	}
+	public function uom()
+	{
+		return $this->belongsTo('App\Uom','uom_id');
+	}
+	public function taxCode()
+	{
+		return $this->belongsTo('Abs\TaxPkg\TaxCode','tax_code_id');
+	}
 
 	public static function createFromObject($record_data) {
 
