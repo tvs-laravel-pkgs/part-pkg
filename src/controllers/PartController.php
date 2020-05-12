@@ -26,12 +26,12 @@ class PartController extends Controller {
 				'parts.name',
 				'parts.code',
 				'parts.rate',
-				'uoms.name as uom',
+				'uoms.code as uom',
 				'tax_codes.code as tax_code',
 				DB::raw('IF(parts.deleted_at IS NULL, "Active","Inactive") as status'),
 			])
-			->join('uoms','uoms.id','parts.uom_id')
-			->join('tax_codes','tax_codes.id','parts.tax_code_id')
+			->leftjoin('uoms','uoms.id','parts.uom_id')
+			->leftjoin('tax_codes','tax_codes.id','parts.tax_code_id')
 			->where('parts.company_id', Auth::user()->company_id)
 
 			->where(function ($query) use ($request) {
@@ -69,7 +69,7 @@ class PartController extends Controller {
 		;
 
 		return Datatables::of($parts)
-			->rawColumns(['name', 'action','status'])
+			// ->rawColumns(['name', 'action','status'])
 			->addColumn('status', function ($part) {
 				$status = $part->status == 'Active' ? 'green' : 'red';
 				return '<span class="status-indicator ' . $status . '"></span>' . $part->status;
@@ -124,14 +124,13 @@ class PartController extends Controller {
 
 
 	public function savePart(Request $request) {
-		//dd($request->all());
+		// dd($request->all());
 		try {
 			$error_messages = [
 				'code.required' => 'Code is Required',
 				'code.unique' => 'Code is already taken',
 				'code.min' => 'Code is Minimum 3 Charachers',
 				'code.max' => 'Code is Maximum 32 Charachers',
-				'name.required' => 'Name is Required',
 				'name.unique' => 'Name is already taken',
 				'name.min' => 'Name is Minimum 3 Charachers',
 				'name.max' => 'Name is Maximum 191 Charachers',
@@ -145,12 +144,12 @@ class PartController extends Controller {
 					'unique:parts,code,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
 				],
 				'name' => [
-					'required:true',
 					'min:3',
 					'max:191',
+					'nullable',
 					'unique:parts,name,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
 				],
-				'tax_code' => [
+				'tax_code_id' => [
 					'nullable',
 					'exists:tax_codes,id',
 				],

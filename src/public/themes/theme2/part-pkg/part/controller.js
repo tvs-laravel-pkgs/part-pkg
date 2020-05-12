@@ -60,7 +60,7 @@ app.component('partList', {
                 { data: 'action', class: 'action', name: 'action', searchable: false },
                 { data: 'code', name: 'parts.code' },
                 { data: 'name', name: 'parts.name' },
-                { data: 'uom', name: 'uoms.name' },
+                { data: 'uom', name: 'uoms.code' },
                 { data: 'tax_code', name: 'tax_codes.code' },
                 { data: 'rate', name: 'parts.rate' },
                 { data: 'status', name: '' },
@@ -214,7 +214,6 @@ app.component('partForm', {
                     maxlength: 32,
                 },
                 'name': {
-                    required: true,
                     minlength: 3,
                     maxlength: 191,
                 },

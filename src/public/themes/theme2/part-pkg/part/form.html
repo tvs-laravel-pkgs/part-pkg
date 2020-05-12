@@ -61,26 +61,25 @@
                                             <div class="input-text form-group">
                                                 <label>
                                                     Name
-                                                    <sup class="mandatory">*</sup>
                                                 </label>
-                                                <input type="text" class="form-control required" ng-model="$ctrl.part.name" name="name" placeholder="Enter Name" />
+                                                <input type="text" class="form-control" ng-model="$ctrl.part.name" name="name" placeholder="Enter Name" />
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
                                         <div class="col-md-3">
-                                            <div class="form-group">
+                                            <div class="input-text form-group">
                                                 <label>
                                                     Uom
                                                 </label>
                                                 <md-select ng-model="$ctrl.part.uom_id" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Uom">
                                                     <md-select-header class="demo-select-header">
-                                                        <input ng-model="searchTerm" type="search" placeholder="Search for a Uom" class="demo-header-searchbox md-text">
+                                                        <input ng-model="searchTerm" type="search" placeholder="Search for a Uom" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
                                                     </md-select-header>
                                                     <md-optgroup>
                                                         <md-option ng-value="uom.id" ng-repeat="uom in $ctrl.extras.uom_list | filter:searchTerm">{{uom.name}}</md-option>
                                                     </md-optgroup>
                                                 </md-select>
-                                                <input type="hidden" class="form-control type-sm" name="uom_id" id="uom_id" value="{{$ctrl.part.uom_id}}">
-                                            </div><!-- Feild -->
+                                                <input type="hidden" class="form-control required" name="uom_id" id="uom_id" value="{{$ctrl.part.uom_id}}">
+                                            </div><!-- Field -->
                                         </div><!-- Column -->
                                         <div class="col-md-3">
                                             <div class="form-group">
@@ -89,7 +88,7 @@
                                                 </label>
                                                 <md-select ng-model="$ctrl.part.tax_code_id" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Tax Code">
                                                     <md-select-header class="demo-select-header">
-                                                        <input ng-model="searchTerm" type="search" placeholder="Search for a Tax Code" class="demo-header-searchbox md-text">
+                                                        <input ng-model="searchTerm" type="search" placeholder="Search for a Tax Code" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
                                                     </md-select-header>
                                                     <md-optgroup>
                                                         <md-option ng-value="tax_code.id" ng-repeat="tax_code in $ctrl.extras.tax_code_list | filter:searchTerm">{{tax_code.name}}</md-option>
