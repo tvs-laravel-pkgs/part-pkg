@@ -157,7 +157,8 @@ app.component('partList', {
             $("#status").val('');
             $('#uom_filter_id').val('');
             $('#tax_code_filter_id').val('');
-            //dataTables.fnFilter();
+            $('#part-filter-modal').modal('hide');
+            dataTables.fnFilter();
         }
         $scope.apply_filter = function() {
             dataTables.fnFilter();

@@ -56,7 +56,7 @@
                                 <th>Actions</th>
                                 <th>Code</th>
                                 <th>Name</th>
-                                <th>Uom</th>
+                                <th>UOM</th>
                                 <th>Tax code</th>
                                 <th>Rate</th>
                                 <th>Status</th>
@@ -79,26 +79,26 @@
             <div class="modal-body">
                 <div class="modal-form">
                     <div class="row">
-                        <div class="col-md-6">
+                        <!--  <div class="col-md-6">
                             <div class="form-group">
                                 <label> Code</label>
                                 <input type="text" class="form-control" id="code" name="code" placeholder="Enter Code" autocomplete="off">
-                            </div><!-- Field -->
-                        </div><!-- Column -->
-                        <div class="col-md-6">
+                            </div><!- Field ->
+                        </div><!- Column - -->
+                        <!--  <div class="col-md-6">
                             <div class="form-group">
                                 <label>Name</label>
                                 <input type="text" class="form-control" id="name" name="name" placeholder="Enter Name" autocomplete="off">
-                            </div><!-- Field -->
-                        </div><!-- Column -->
+                            </div><!- Field ->
+                        </div><!- Column -->
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>
-                                    Uom
+                                    UOM
                                 </label>
-                                <md-select ng-model="$ctrl.uom_id" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Uom" ng-change="onSelectedUom($ctrl.uom_id)">
+                                <md-select ng-model="$ctrl.uom_id" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select UOM" ng-change="onSelectedUom($ctrl.uom_id)">
                                     <md-select-header class="demo-select-header">
-                                        <input ng-model="searchTerm" type="search" placeholder="Search for a Uom" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                        <input ng-model="searchTerm" type="search" placeholder="Search for a UOM" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
                                     </md-select-header>
                                     <md-optgroup>
                                         <md-option ng-value="uom.id" ng-repeat="uom in $ctrl.extras.uom_list | filter:searchTerm">{{uom.name}}</md-option>
