@@ -1,10 +1,10 @@
 <?php
 
 namespace Abs\PartPkg;
+use Abs\GigoPkg\TaxCode;
 use App\Http\Controllers\Controller;
 use App\Part;
 use App\Uom;
-use Abs\GigoPkg\TaxCode;
 use Auth;
 use Carbon\Carbon;
 use DB;
@@ -30,8 +30,8 @@ class PartController extends Controller {
 				'tax_codes.code as tax_code',
 				DB::raw('IF(parts.deleted_at IS NULL, "Active","Inactive") as status'),
 			])
-			->leftjoin('uoms','uoms.id','parts.uom_id')
-			->leftjoin('tax_codes','tax_codes.id','parts.tax_code_id')
+			->leftjoin('uoms', 'uoms.id', 'parts.uom_id')
+			->leftjoin('tax_codes', 'tax_codes.id', 'parts.tax_code_id')
 			->where('parts.company_id', Auth::user()->company_id)
 
 			->where(function ($query) use ($request) {
@@ -69,7 +69,7 @@ class PartController extends Controller {
 		;
 
 		return Datatables::of($parts)
-			// ->rawColumns(['name', 'action','status'])
+		// ->rawColumns(['name', 'action','status'])
 			->addColumn('status', function ($part) {
 				$status = $part->status == 'Active' ? 'green' : 'red';
 				return '<span class="status-indicator ' . $status . '"></span>' . $part->status;
@@ -122,7 +122,6 @@ class PartController extends Controller {
 		return response()->json($this->data);
 	}
 
-
 	public function savePart(Request $request) {
 		// dd($request->all());
 		try {
@@ -174,6 +173,11 @@ class PartController extends Controller {
 			} else {
 				$part = Part::withTrashed()->find($request->id);
 				$part->updated_by_id = Auth::user()->id;
+
+				//If Rate differed previous rate it will change all service type parts amount
+				if ($request->rate != $part->rate) {
+					$this->changeServiceRate($part->id, $request->rate);
+				}
 			}
 			$part->fill($request->all());
 			if ($request->status == 'Inactive') {
@@ -181,7 +185,7 @@ class PartController extends Controller {
 				$part->deleted_by_id = Auth::user()->id;
 			} else {
 				$part->deleted_at = NULL;
-				$part->deleted_by_id =NULL;
+				$part->deleted_by_id = NULL;
 			}
 			$part->save();
 
@@ -206,6 +210,17 @@ class PartController extends Controller {
 		}
 	}
 
+	public function changeServiceRate($part_id, $rate) {
+
+		$service_types = DB::table('part_service_type')->where('part_service_type.part_id', $part_id)->select('quantity', 'amount', 'service_type_id')->get();
+
+		foreach ($service_types as $key => $value) {
+			$qty = $value->quantity;
+			$amount = $qty * $rate;
+			DB::table('part_service_type')->where('part_id', $part_id)->where('service_type_id', $value->service_type_id)->update(['amount' => $amount]);
+		}
+
+	}
 	public function deletePart(Request $request) {
 		DB::beginTransaction();
 		// dd($request->id);
