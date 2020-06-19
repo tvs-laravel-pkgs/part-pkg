@@ -49,13 +49,11 @@ class Part extends BaseModel {
 	public function setDateOfJoinAttribute($date) {
 		return $this->attributes['date_of_join'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
 	}
-	public function uom()
-	{
-		return $this->belongsTo('App\Uom','uom_id');
+	public function uom() {
+		return $this->belongsTo('App\Uom', 'uom_id');
 	}
-	public function taxCode()
-	{
-		return $this->belongsTo('Abs\TaxPkg\TaxCode','tax_code_id');
+	public function taxCode() {
+		return $this->belongsTo('Abs\TaxPkg\TaxCode', 'tax_code_id');
 	}
 
 	public static function createFromObject($record_data) {
@@ -104,6 +102,22 @@ class Part extends BaseModel {
 			$list->prepend(['id' => '', 'name' => $default_text]);
 		}
 		return $list;
+	}
+
+	public static function searchPart($r) {
+		$key = $r->key;
+		$list = self::select(
+			'id',
+			'code',
+			'name'
+		)
+			->where(function ($q) use ($key) {
+				$q->where('name', 'like', $key . '%')
+					->orwhere('code', 'like', $key . '%')
+				;
+			})
+			->get();
+		return response()->json($list);
 	}
 
 }
