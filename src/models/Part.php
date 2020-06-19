@@ -3,19 +3,44 @@
 namespace Abs\PartPkg;
 
 use Abs\HelperPkg\Traits\SeederTrait;
+use App\BaseModel;
 use App\Company;
 use App\Config;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Part extends Model {
+class Part extends BaseModel {
 	use SeederTrait;
 	use SoftDeletes;
 	protected $table = 'parts';
 	public $timestamps = true;
 	protected $fillable =
-		["id","company_id","code","name","uom_id","rate","tax_code_id"]
+		["id", "company_id", "code", "name", "uom_id", "rate", "tax_code_id"]
 	;
+
+	public static function relationships($action = '') {
+		$relationships = [
+			// 'type',
+			// 'outlet',
+			// 'vehicle',
+			// 'serviceType',
+			// 'status',
+		];
+
+		return $relationships;
+	}
+
+	// Query Scopes --------------------------------------------------------------
+
+	public function scopeFilterSearch($query, $term) {
+		if (strlen($term)) {
+			$query->where(function ($query) use ($term) {
+				$query->orWhere('code', 'LIKE', '%' . $term . '%');
+				$query->orWhere('name', 'LIKE', '%' . $term . '%');
+			});
+		}
+	}
+
+	// Static Operations --------------------------------------------------------------
 
 	public function getDateOfJoinAttribute($value) {
 		return empty($value) ? '' : date('d-m-Y', strtotime($value));
