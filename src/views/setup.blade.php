@@ -33,5 +33,5 @@
     var part_card_list_template_url = '{{asset($part_pkg_prefix.'/public/themes/'.$theme.'/part-pkg/part/card-list.html')}}';
     var part_modal_form_template_url = '{{asset($part_pkg_prefix.'/public/themes/'.$theme.'/part-pkg/partials/part-modal-form.html')}}';
 </script>
-<script type='text/javascript' src='{{asset($part_pkg_prefix.'/public/themes/'.$theme.'/part-pkg/part/controller.js')}}'></script>
+<!-- <script type='text/javascript' src='{{asset($part_pkg_prefix.'/public/themes/'.$theme.'/part-pkg/part/controller.js')}}'></script> -->
 
