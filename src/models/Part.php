@@ -24,6 +24,9 @@ class Part extends BaseModel {
 			// 'vehicle',
 			// 'serviceType',
 			// 'status',
+			'uom',
+			'taxCode',
+			'taxCode.taxes'
 		];
 
 		return $relationships;
