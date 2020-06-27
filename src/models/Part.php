@@ -5,7 +5,6 @@ namespace Abs\PartPkg;
 use Abs\HelperPkg\Traits\SeederTrait;
 use App\BaseModel;
 use App\Company;
-use App\Config;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Part extends BaseModel {
@@ -19,18 +18,74 @@ class Part extends BaseModel {
 
 	public static function relationships($action = '') {
 		$relationships = [
-			// 'type',
-			// 'outlet',
-			// 'vehicle',
-			// 'serviceType',
-			// 'status',
 			'uom',
 			'taxCode',
-			'taxCode.taxes'
+			'taxCode.taxes',
 		];
 
 		return $relationships;
 	}
+
+	protected static $excelColumnRules = [
+		'Code' => [
+			'table_column_name' => 'code',
+			'rules' => [
+				'required' => [
+				],
+			],
+		],
+		'Name' => [
+			'table_column_name' => 'name',
+			'rules' => [
+				'required' => [
+				],
+			],
+		],
+		'UOM Code' => [
+			'table_column_name' => 'uom_id',
+			'rules' => [
+				'nullable' => [
+				],
+				'fk' => [
+					'class' => 'App\Uom',
+					'foreign_table_column' => 'code',
+					'check_with_company' => true,
+				],
+			],
+		],
+		'Rate' => [
+			'table_column_name' => 'rate',
+			'rules' => [
+				'required' => [
+				],
+				'unsigned_decimal' => [
+					'size' => '12,2',
+				],
+			],
+		],
+		'MRP' => [
+			'table_column_name' => 'mrp',
+			'rules' => [
+				'required' => [
+				],
+				'unsigned_decimal' => [
+					'size' => '12,2',
+				],
+			],
+		],
+		'Tax Code' => [
+			'table_column_name' => 'tax_code_id',
+			'rules' => [
+				'nullable' => [
+				],
+				'fk' => [
+					'class' => 'App\TaxCode',
+					'foreign_table_column' => 'code',
+					'check_with_company' => true,
+				],
+			],
+		],
+	];
 
 	// Query Scopes --------------------------------------------------------------
 
@@ -43,7 +98,7 @@ class Part extends BaseModel {
 		}
 	}
 
-	// Static Operations --------------------------------------------------------------
+	// Getter & Setters --------------------------------------------------------------
 
 	public function getDateOfJoinAttribute($value) {
 		return empty($value) ? '' : date('d-m-Y', strtotime($value));
@@ -52,6 +107,9 @@ class Part extends BaseModel {
 	public function setDateOfJoinAttribute($date) {
 		return $this->attributes['date_of_join'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
 	}
+
+	// Relations --------------------------------------------------------------
+
 	public function uom() {
 		return $this->belongsTo('App\Uom', 'uom_id');
 	}
@@ -59,39 +117,66 @@ class Part extends BaseModel {
 		return $this->belongsTo('Abs\TaxPkg\TaxCode', 'tax_code_id');
 	}
 
-	public static function createFromObject($record_data) {
+	// Static operations --------------------------------------------------------------
 
+	public static function saveFromObject($record_data) {
+		$record = [
+			'Company Code' => $record_data->company_code,
+			'Code' => $record_data->code,
+			'Name' => $record_data->name,
+			'UOM Code' => $record_data->uom_code,
+			'Rate' => $record_data->rate,
+			'MRP' => $record_data->mrp,
+			'Tax Code' => $record_data->tax_code,
+		];
+		return static::saveFromExcelArray($record);
+	}
+
+	public static function saveFromExcelArray($record_data) {
 		$errors = [];
-		$company = Company::where('code', $record_data->company)->first();
+		$company = Company::where('code', $record_data['Company Code'])->first();
 		if (!$company) {
-			dump('Invalid Company : ' . $record_data->company);
-			return;
+			return [
+				'success' => false,
+				'errors' => ['Invalid Company : ' . $record_data['Company Code']],
+			];
 		}
 
-		$admin = $company->admin();
-		if (!$admin) {
-			dump('Default Admin user not found');
-			return;
-		}
+		if (!isset($record_data['created_by_id'])) {
+			$admin = $company->admin();
 
-		$type = Config::where('name', $record_data->type)->where('config_type_id', 89)->first();
-		if (!$type) {
-			$errors[] = 'Invalid Tax Type : ' . $record_data->type;
+			if (!$admin) {
+				return [
+					'success' => false,
+					'errors' => ['Default Admin user not found'],
+				];
+			}
+			$created_by_id = $admin->id;
+		} else {
+			$created_by_id = $record_data['created_by_id'];
 		}
 
 		if (count($errors) > 0) {
-			dump($errors);
-			return;
+			return [
+				'success' => false,
+				'errors' => $errors,
+			];
 		}
 
-		$record = self::firstOrNew([
+		$record = Self::firstOrNew([
 			'company_id' => $company->id,
-			'name' => $record_data->tax_name,
+			'code' => $record_data['Code'],
 		]);
-		$record->type_id = $type->id;
-		$record->created_by_id = $admin->id;
+
+		$result = Self::validateAndFillExcelColumns($record_data, Static::$excelColumnRules, $record);
+		if (!$result['success']) {
+			return $result;
+		}
+		$record->created_by_id = $created_by_id;
 		$record->save();
-		return $record;
+		return [
+			'success' => true,
+		];
 	}
 
 	public static function getList($params = [], $add_default = true, $default_text = 'Select Part') {
