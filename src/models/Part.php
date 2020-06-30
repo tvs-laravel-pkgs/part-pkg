@@ -156,6 +156,18 @@ class Part extends BaseModel {
 			$created_by_id = $record_data['created_by_id'];
 		}
 
+		if (empty($record_data['Rate'])) {
+			$errors[] = 'Rate is empty';
+		} else {
+			$rate = $record_data['Rate'];
+		}
+
+		if (empty($record_data['MRP'])) {
+			$errors[] = 'MRP is empty';
+		} else {
+			$mrp = $record_data['MRP'];
+		}
+
 		if (count($errors) > 0) {
 			return [
 				'success' => false,
@@ -172,6 +184,8 @@ class Part extends BaseModel {
 		if (!$result['success']) {
 			return $result;
 		}
+		$record->mrp = $mrp;
+		$record->rate = $rate;
 		$record->created_by_id = $created_by_id;
 		$record->save();
 		return [
