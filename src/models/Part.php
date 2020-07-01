@@ -116,6 +116,9 @@ class Part extends BaseModel {
 	public function taxCode() {
 		return $this->belongsTo('Abs\TaxPkg\TaxCode', 'tax_code_id');
 	}
+	public function repair_order() {
+		return $this->belongsToMany('App\RepairOrder');
+	}
 
 	// Static operations --------------------------------------------------------------
 
