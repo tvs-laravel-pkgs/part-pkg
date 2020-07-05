@@ -16,12 +16,25 @@ class Part extends BaseModel {
 		["id", "company_id", "code", "name", "uom_id", "rate", "tax_code_id"]
 	;
 
-	public static function relationships($action = '') {
-		$relationships = [
-			'uom',
-			'taxCode',
-			'taxCode.taxes',
-		];
+	public static function relationships($action = 'index') {
+		if ($action == 'index') {
+			$relationships = [
+				'uom',
+				'taxCode',
+			];
+
+		} else if ($action == 'read') {
+			$relationships = [
+				'uom',
+				'taxCode',
+				'taxCode.taxes',
+			];
+		} else if ($action == 'options') {
+			$relationships = [
+				'uom',
+				'taxCode',
+			];
+		}
 
 		return $relationships;
 	}
