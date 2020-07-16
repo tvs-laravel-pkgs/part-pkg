@@ -2,9 +2,17 @@
 
 namespace Abs\PartPkg;
 use Abs\GigoPkg\TaxCode;
+use Abs\ServiceInvoicePkg\ServiceItemCategory;
+use Abs\ServiceInvoicePkg\ServiceItemSubCategory;
 use App\Http\Controllers\Controller;
 use App\Part;
+use App\PartAlternate;
+use App\PartUpsell;
+use App\PartVehicleDetail;
+use App\VehicleMake;
+use App\VehicleModel;
 use App\Uom;
+use App\Config;
 use Auth;
 use Carbon\Carbon;
 use DB;
@@ -91,15 +99,86 @@ class PartController extends Controller {
 			->make(true);
 	}
 
+
 	public function getPartFormData(Request $request) {
 		$id = $request->id;
+		//UPDATED BY KARTHICK T ON 15-07-2020
+		$this->data['category_list'] = collect(ServiceItemCategory::where('company_id', Auth::user()->company_id)->select('name', 'id')->get())->prepend(['id' => '', 'name' => 'Select Item Category']);
+		$this->data['sub_category_list'] = [];
+		$this->data['components_list'] = [];
+		$this->data['vehicle_make_list'] = collect(VehicleMake::where('company_id', Auth::user()->company_id)->select('name', 'id')->groupBy('name')->get())->prepend(['id' => '', 'name' => 'Select Vehicle Make']);
+		$this->data['year_list'] = collect(Config::where('config_type_id', 125)->select('name', 'id')->groupBy('name')->get())->prepend(['id' => '', 'name' => 'Select Vehicle Year']);
+		$this->data['fuel_type_list'] = collect(Config::where('config_type_id', 126)->select('name', 'id')->groupBy('name')->get())->prepend(['id' => '', 'name' => 'Select Fuel Type']);
+		$this->data['vehicle_type_list'] = collect(Config::where('config_type_id', 127)->select('name', 'id')->groupBy('name')->get())->prepend(['id' => '', 'name' => 'Select Vehicle Type']);
+
+		$this->data['vehicle_model_list'] = new VehicleModel;
+		
 		if (!$id) {
 			$part = new Part;
 			$action = 'Add';
+			$part->hsn_code = [];
+			$part->vehicle_categories = [];
+			$this->data['vehicle_mappings'] = new PartVehicleDetail();
+			$this->data['alt_parts'] = [];
+			$this->data['upsell_parts'] = [];
+			$this->data['alt_parts_ids'] = [];
+			$this->data['upsell_parts_ids'] = [];
+			$this->data['part_attachments'] = [];
+
 		} else {
-			$part = Part::withTrashed()->find($id);
+			$part = Part::select(
+				'parts.*',
+				DB::raw('COALESCE(DATE_FORMAT(item_available_date,"%d-%m-%Y"), "--") as item_available_date')
+			)->withTrashed()
+			->find($id);
 			$action = 'Edit';
+
+			$part->hsn_code = TaxCode::where('id',$part->tax_code_id)
+					->select('code', 'id')
+					->first();
+			$this->data['alt_parts'] = $alt_parts = Part::select(
+				'parts.id',
+				'parts.code',
+				'parts.name',
+				'parts.mrp',
+				'parts.cost_price',
+				'parts.list_price'
+			)
+				->leftjoin('part_alternate', 'parts.id', 'part_alternate.alternate_part_id')
+				->where('part_id', $id)
+				->get();
+			$this->data['upsell_parts'] = $upsell_parts = Part::select(
+				'parts.id',
+				'parts.code',
+				'parts.name',
+				'parts.mrp',
+				'parts.cost_price',
+				'parts.list_price'
+			)
+				->leftjoin('part_upsell', 'parts.id', 'part_upsell.upsell_part_id')
+				->where('part_id', $id)
+				->get();
+
+			$this->data['alt_parts_ids'] = PartAlternate::leftjoin('parts', 'parts.id', 'part_alternate.alternate_part_id')
+				->where('part_id', $id)
+				->pluck('parts.id');
+
+			$this->data['upsell_parts_ids'] = PartUpsell::leftjoin('parts', 'parts.id', 'part_upsell.upsell_part_id')
+				->where('part_id', $id)
+				->pluck('parts.id');
+
+			$vehicle_mappings = PartVehicleDetail::with(
+				'vehicleModel',
+				'vehicleModel.vehicleMake'
+			)
+				->where('part_id', $id)
+				->get();
+
+			$this->data['vehicle_mappings'] = $vehicle_mappings;
+
 		}
+
+		//UPDATED BY KARTHICK T ON 15-07-2020
 		$this->data['success'] = true;
 		$this->data['part'] = $part;
 		$this->data['action'] = $action;
@@ -109,6 +188,7 @@ class PartController extends Controller {
 		];
 		return response()->json($this->data);
 	}
+
 	public function getPartFilterData() {
 		$this->data['extras'] = [
 			'uom_list' => Uom::getList(),
@@ -133,7 +213,7 @@ class PartController extends Controller {
 				'name.unique' => 'Name is already taken',
 				'name.min' => 'Name is Minimum 3 Charachers',
 				'name.max' => 'Name is Maximum 191 Charachers',
-				'rate.required' => 'Rate is Required',
+				'display_order.unique' => 'Display Order is already taken',
 			];
 			$validator = Validator::make($request->all(), [
 				'code' => [
@@ -156,9 +236,8 @@ class PartController extends Controller {
 					'nullable',
 					'exists:uoms,id',
 				],
-				'rate' => [
-					'required:true',
-					'numeric',
+				'display_order' => [
+					'unique:parts,display_order,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
 				],
 			], $error_messages);
 			if ($validator->fails()) {
@@ -179,7 +258,26 @@ class PartController extends Controller {
 					$this->changeServiceRate($part->id, $request->rate);
 				}
 			}
-			$part->fill($request->all());
+			$part->code = $request->code;
+			$part->name = $request->name;
+			$part->rate = $request->rate;
+			$part->category_id = $request->category_id;
+			$part->sub_category_id = $request->sub_category_id;
+			$part->min_sale_order_qty = $request->min_sale_order_qty;
+			$part->max_sale_order_qty = $request->max_sale_order_qty;
+			$part->uom_id = $request->uom_id;
+			$part->tax_code_id = $request->tax_code_id;
+			$part->pack_size = $request->pack_size;
+			$part->height = $request->height;
+			$part->width = $request->width;
+			$part->weight = $request->weight;
+			$part->item_available_date = date('Y-m-d',strtotime($request->item_available_date));
+			$part->item_name_in_local_lang = $request->item_name_in_local_lang;
+			$part->product_video_link = $request->product_video_link;
+			$part->mrp = $request->mrp;
+			$part->list_price = $request->list_price;
+			$part->cost_price = $request->cost_price;
+			$part->display_order = $request->display_order;
 			if ($request->status == 'Inactive') {
 				$part->deleted_at = Carbon::now();
 				$part->deleted_by_id = Auth::user()->id;
@@ -187,7 +285,56 @@ class PartController extends Controller {
 				$part->deleted_at = NULL;
 				$part->deleted_by_id = NULL;
 			}
+
 			$part->save();
+
+			//Vehicle Part Store
+			if(isset($request->vehicle_make_id) && count($request->vehicle_make_id) > 0){
+				$delete_vehicle_details = PartVehicleDetail::where('part_id', $part->id)
+					->forceDelete();
+				foreach ($request->vehicle_make_id as $key => $make_id) {
+					$alternate_part = PartVehicleDetail::updateOrInsert([
+						'part_id' => $part->id, 
+						'vehicle_make_id' => $make_id,
+						'vehicle_model_id' => $request->vehicle_model_id[$key],
+						'vehicle_year_id' => $request->years[$key],
+						'fuel_type_id' => $request->fuel_type[$key],
+						'vehicle_type_id' => $request->vehicle_type[$key]
+					]);
+				}
+			}
+
+			$alt_parts = [];
+			if(isset($request->alternate_part_ids) && $request->alternate_part_ids != null){
+				$alt_parts = explode(",", $request->alternate_part_ids);
+			}
+			//Alternate Part Store
+			if(count($alt_parts) > 0){
+				$delete_alt_part_details = PartAlternate::where('part_id', $part->id)
+					->forceDelete();
+				foreach ($alt_parts as $key => $alternate_part_id) {
+					$alternate_part = PartAlternate::updateOrInsert([
+						'part_id' => $part->id, 
+						'alternate_part_id' => $alternate_part_id
+					]);
+				}
+			}
+
+			$upsell_parts = [];
+			if(isset($request->upsell_part_ids) && $request->upsell_part_ids != null){
+				$upsell_parts = explode(",", $request->upsell_part_ids);
+			}
+			//Upsell Part Store
+			if(count($upsell_parts) > 0){
+				$delete_upsell_part_details = PartUpsell::where('part_id', $part->id)
+					->forceDelete();
+				foreach ($upsell_parts as $key => $upsell_part_id) {
+					$alternate_part = PartUpsell::updateOrInsert([
+						'part_id' => $part->id, 
+						'upsell_part_id' => $upsell_part_id
+					]);
+				}
+			}
 
 			DB::commit();
 			if (!($request->id)) {
@@ -256,4 +403,87 @@ class PartController extends Controller {
 			'parts' => $parts,
 		]);
 	}
+
+	//CREATED BY KARTHICK T ON 15-07-2020
+	public function getItemSubCategoryByCategory(Request $request) {
+		if (!empty($request->part_category_id)) {
+			$part_sub_categories_list = collect(
+				ServiceItemSubCategory::where('category_id', $request->part_category_id)
+					->select('name', 'id')
+					->get()
+				)
+				->prepend(['id' => '', 'name' => 'Select Item Sub Category']);
+		} else {
+			$part_sub_categories_list = [];
+		}
+		return response()->json(['part_sub_categories_list' => $part_sub_categories_list]);
+	}
+	public function getHsnCode(Request $request) {
+		if (!empty($request->key)) {
+			$tax_code_list = collect(
+				TaxCode::where('code','like','%'. $request->key . '%')
+					->where('type_id', 1020)	// HSN CODE
+					->select('code', 'id')
+					->get()
+				);
+		} else {
+			$tax_code_list = [];
+		}
+		return response()->json(['tax_code_list' => $tax_code_list]);
+	}
+	public function getVehicleModelByMake(Request $request){
+		if (!empty($request->vehicle_make_id)) {
+			$vehicle_model_list = collect(
+				VehicleModel::select('model_name as name', 'id')
+					->where('vehicle_make_id', $request->vehicle_make_id)
+					->groupBy('model_name')
+					->get()
+				)->prepend(['id' => '', 'name' => 'Select Vehicle Model']);
+		} else {
+			$vehicle_model_list = [];
+		}
+		return response()->json(['vehicle_model_list' => $vehicle_model_list]);
+	}
+	public function getNewPartDetail(Request $request){
+		// dd($request->all());
+		$ids = [];
+		if(!empty($request->part_ids)){
+			$ids = array_map('intval', explode(",", $request->part_ids));
+		}
+		if($request->id){
+			array_push($ids, (int) $request->id);
+		}
+		if (!empty($request->key)) {
+			$search_results = Part::where(function ($query) use ($request) {
+					$query->where('code','like','%'. $request->key . '%')
+						->orWhere('name', 'like', '%' . $request->key . '%');
+				})
+				->whereNotIn('id',$ids)
+				->select(
+					'id', 
+					'code',
+					'name'
+				)
+				->limit(10)
+				->get();
+		} else {
+			$search_results = [];
+		}
+		return response()->json(['new_parts_list' => $search_results]);
+	}
+	public function addNewParts(Request $request){
+		$this->data['new_parts'] = Part::select(
+				'id', 
+				'code',
+				'name',
+				'mrp',
+				'cost_price',
+				'list_price'
+			)
+			->where('id', $request->add_part_id)
+			->first();
+
+		return response()->json($this->data);
+	}
+	//CREATED BY KARTHICK T ON 15-07-2020
 }

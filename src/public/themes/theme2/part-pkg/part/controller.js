@@ -181,6 +181,7 @@ app.component('partForm', {
             return false;
         }
         self.angular_routes = angular_routes;
+        //UPDATED BY KARTHICK T ON 15-07-2020
         $http.get(
             laravel_routes['getPartFormData'], {
                 params: {
@@ -188,10 +189,30 @@ app.component('partForm', {
                 }
             }
         ).then(function(response) {
+            self.part_category_list = response.data.category_list;
+            self.part_sub_category_list = response.data.sub_category_list;
+            self.components_list = response.data.components_list;
+            self.vehicle_make_list = response.data.vehicle_make_list;
+            self.vehicle_model_list = response.data.vehicle_model_list;
+            self.uom_list = response.data.extras.uom_list;
             self.part = response.data.part;
-            self.extras = response.data.extras;
-            console.log(self.part);
+            self.alt_parts = response.data.alt_parts;
+            self.upsell_parts = response.data.upsell_parts;
             self.action = response.data.action;
+            self.alt_parts_ids = response.data.alt_parts_ids;
+            self.upsell_parts_ids = response.data.upsell_parts_ids;
+            self.vehicle_mappings = response.data.vehicle_mappings;
+            self.years_list = response.data.year_list;
+            self.fuel_type_list = response.data.fuel_type_list;
+            self.vehicle_type_list = response.data.vehicle_type_list;
+            
+            $('#alternate_part_ids').val(self.alt_parts_ids.join());
+            $('#upsell_part_ids').val(self.upsell_parts_ids.join());
+
+            if (response.data.action == "Edit") {
+                $scope.getSubCategoryBasedonCategory(self.part.category_id);
+            }
+
             $rootScope.loading = false;
             if (self.action == 'Edit') {
                 if (self.part.deleted_at) {
@@ -204,37 +225,346 @@ app.component('partForm', {
             }
         });
 
-        //Save Form Data 
+        $('.item_available_date').datepicker({
+            dateFormat: 'dd-mm-yy',
+            changeMonth: true,
+            todayHighlight: true,
+            autoclose: true,
+        });
+
+        $("input:text:visible:first").focus();
+
+        $scope.getSubCategoryBasedonCategory = function(part_category_id) {
+            if (part_category_id) {
+                $.ajax({
+                        url: laravel_routes['getItemSubCategoryByCategory'],
+                        method: "POST",
+                        data: { part_category_id: part_category_id },
+                    })
+                    .done(function(res) {
+                        self.part_sub_category_list = [];
+                        self.part_sub_category_list = res.part_sub_categories_list;
+                        $scope.$apply()
+                    })
+                    .fail(function(xhr) {
+                        console.log(xhr);
+                    });
+            }
+        }
+
+        $scope.getVehicleModelBasedonMake = function(key, vehicle_make_id) {
+            $.ajax({
+                    url: laravel_routes['getVehicleModelByMake'],
+                    method: "POST",
+                    data: { vehicle_make_id: vehicle_make_id },
+                })
+                .done(function(res) {
+                    self.vehicle_mappings[key].model_list = [];
+                    $(res['vehicle_model_list']).each(function(i, v) {
+                        self.vehicle_mappings[key].model_list.push({
+                            id: v['id'],
+                            name: v['name'],
+                        });
+                    });
+                    $scope.$apply()
+
+                })
+                .fail(function(xhr) {    
+                    console.log(xhr);
+                });
+        }
+
+        self.addNewVehicleMapping = function() {
+            self.vehicle_mappings.push({
+                vehicle_category_id: '',
+                vehicle_make_id: '',
+                vehicle_model_id: '',
+                vehicle_year_id: '',
+                make_list: [],
+                model_list: [],
+                years_list: self.years_list,
+            });
+        }
+
+        $scope.deleteVehicleModelconfirm = function(index, part_mapping_id) {
+            $('#delete_part_mapping_id').val(part_mapping_id);
+            $('#delete_vehicle_mapping_index').val(index);
+        }
+
+        $scope.deleteVehicleCategory = function() {
+            var index = $('#delete_vehicle_mapping_index').val();
+            var part_mapping_id = $('#delete_part_mapping_id').val();
+            if (part_mapping_id) {
+                $.ajax({
+                        url: delete_part_mapping + '/' + part_mapping_id,
+                        method: "GET",
+                    })
+                    .done(function(res) {
+                        console.log(res);
+                    })
+                    .fail(function(xhr) {
+                        console.log(xhr);
+                    });
+            }
+            self.vehicle_mappings.splice(index, 1);
+        }
+
+        //GET HSN CODE LIST
+        self.searcHsnCode = function(query) {
+            if (query) {
+                return new Promise(function(resolve, reject) {
+                    $http
+                        .post(
+                            laravel_routes['getHsnCode'], {
+                                key: query,
+                            }
+                        )
+                        .then(function(response) {
+                            resolve(response.data.tax_code_list);
+                        });
+                    //reject(response);
+                });
+            } else {
+                return [];
+            }
+        }
+
+        /* Pane Next Button */
+        $('.btn-nxt').on("click", function() {
+            $('.editDetails-tabs li.active').next().children('a').trigger("click");
+        });
+        $('.btn-prev').on("click", function() {
+            $('.editDetails-tabs li.active').prev().children('a').trigger("click");
+        });
+
+        //Colors Click
+        $('.colors').on('click', function() {
+            var color = $(this).attr('data-original-title');
+            $('.color').val(color);
+        });
+
+        //Alternate Search
+        $scope.altSearchClose = function() {
+            $('#alt_part_search').hide();
+            $('#alt_search_close').hide();
+        }
+        //Search Alternate Parts
+        self.searchAlternateParts = function(query) {
+            if (query) {
+                var alternate_part_ids = $("#alternate_part_ids").val();
+                var id = $("#id").val();
+                return new Promise(function(resolve, reject) {
+                    $http
+                        .post(
+                            laravel_routes['getNewPartDetail'], {
+                                key: query,
+                                part_ids: alternate_part_ids,
+                                id: id,
+                            }
+                        )
+                        .then(function(response) {
+                            resolve(response.data.new_parts_list);
+                        });
+                    //reject(response);
+                });
+            } else {
+                return [];
+            }
+        }
+        
+        //Add Alternate Parts
+        $(document).on('click', '#btn_alt_add', function() {
+            var add_part_id = $(this).attr('value');
+            $.ajax({
+                url: laravel_routes['addNewParts'],
+                type: 'get',
+                data: {'add_part_id': add_part_id},
+                success: function(response) {
+                    var alt_response_parts = response.new_parts;
+                    self.alt_parts_ids.push(alt_response_parts.id);
+                    $('#alternate_part_ids').val(self.alt_parts_ids.join());
+
+                    self.alt_parts.push({
+                        id: alt_response_parts.id,
+                        code: alt_response_parts.code,
+                        name: alt_response_parts.name,
+                        mrp: alt_response_parts.mrp,
+                        cost_price: alt_response_parts.cost_price,
+                        list_price: alt_response_parts.list_price,
+                    });
+                    $('#alt_part_search').hide();
+                    $('#alt_search_close').hide();
+                    $scope.$apply()
+
+                }
+            });
+            self.alternate_part.code = null;
+            return false;
+        });
+
+        //Upsell Search
+        $scope.upsellSearchClose = function() {
+            $('#upsell_part_search').hide();
+            $('#upsell_search_close').hide();
+        }
+        //Search Upsell List
+        self.searchUpsellParts = function(query) {
+            if (query) {
+                var upsell_part_ids = $("#upsell_part_ids").val();
+                var id = $("#id").val();
+                return new Promise(function(resolve, reject) {
+                    $http
+                        .post(
+                            laravel_routes['getNewPartDetail'], {
+                                key: query,
+                                part_ids: upsell_part_ids,
+                                id: id,
+                            }
+                        )
+                        .then(function(response) {
+                            resolve(response.data.new_parts_list);
+                        });
+                    //reject(response);
+                });
+            } else {
+                return [];
+            }
+        }
+        //Add Upsell Parts
+        $(document).on('click', '#btn_upsell_add', function() {
+            var add_part_id = $(this).val();
+            $.ajax({
+                url: laravel_routes['addNewParts'],
+                type: 'get',
+                data: {'add_part_id': add_part_id},
+                success: function(response) {
+                    var upsell_response_parts = response.new_parts;
+                    self.upsell_parts_ids.push(upsell_response_parts.id);
+                    $('#upsell_part_ids').val(self.upsell_parts_ids.join());
+
+                    self.upsell_parts.push({
+                        id: upsell_response_parts.id,
+                        code: upsell_response_parts.code,
+                        name: upsell_response_parts.name,
+                        mrp: upsell_response_parts.mrp,
+                        cost_price: upsell_response_parts.cost_price,
+                        list_price: upsell_response_parts.list_price,
+                    });
+                    $('#upsell_part_search').hide();
+                    $('#upsell_search_close').hide();
+                    $scope.$apply()
+
+                }
+            });
+            self.upsell_part.code = null;
+            return false;
+        });
+
+        //Remove Alternate Parts
+        self.removeAlternateParts = function(index, alt_part_id) {
+            var alt_part_index = self.alt_parts_ids.indexOf(alt_part_id);
+            if (alt_part_index > -1) {
+                self.alt_parts_ids.splice(alt_part_index, 1);
+            }
+            $('#alternate_part_ids').val(self.alt_parts_ids.join());
+            self.alt_parts.splice(index, 1);
+        }
+
+        //Remove Upsell Parts
+        self.removeUpsellParts = function(index, upsell_part_id) {
+            var upsell_part_index = self.upsell_parts_ids.indexOf(upsell_part_id);
+            if (upsell_part_index > -1) {
+                self.upsell_parts_ids.splice(upsell_part_index, 1);
+            }
+            $('#upsell_part_ids').val(self.upsell_parts_ids.join());
+
+            self.upsell_parts.splice(index, 1);
+        }
+
+
+        jQuery.validator.addMethod("decimal", function(value, element) {
+            return this.optional(element) || /^\d{0,10}(\.\d{0,2})?$/i.test(value);
+        }, "You must include two decimal places");
+        //Form Submit
         var form_id = '#part_form';
         var v = jQuery(form_id).validate({
-            ignore: '',
-            rules: {
-                'code': {
-                    required: true,
-                    minlength: 3,
-                    maxlength: 32,
-                },
-                'name': {
-                    minlength: 3,
-                    maxlength: 191,
-                },
-                'rate': {
-                    required: true,
-                    number: true,
-                }
-            },
-            messages: {
-                'code': {
-                    minlength: 'Minimum 3 Characters',
-                    maxlength: 'Maximum 32 Characters',
-                },
-                'name': {
-                    minlength: 'Minimum 3 Characters',
-                    maxlength: 'Maximum 191 Characters',
-                },
-            },
             invalidHandler: function(event, validator) {
                 custom_noty('error', 'You have errors, Please check all tabs');
+            },
+            ignore: "",
+            rules: {
+                code: {
+                    required: true,
+                    maxlength: 50,
+                },
+                name: {
+                    required: true,
+                    maxlength: 255,
+                },
+                min_qty: {
+                    number: true,
+                    maxlength: 11,
+                    min: 0,
+                },
+                max_qty: {
+                    number: true,
+                    maxlength: 11,
+                    min: 0,
+                },
+                height: {
+                    number: true,
+                    min: 0,
+                    maxlength: 11,
+                },
+                width: {
+                    number: true,
+                    min: 0,
+                    maxlength: 11,
+                },
+                weight: {
+                    number: true,
+                    min: 0,
+                    maxlength: 11,
+                },
+                part_available_date: {},
+                local_lang_name: {
+                    maxlength: 100,
+                },
+                package_qty: {
+                    number: true,
+                    maxlength: 11,
+                    min: 0,
+                },
+                aggregate: {
+                    maxlength: 30,
+                },
+                sub_aggregate: {
+                    maxlength: 30,
+                },
+                tax_code_id: {
+                    required: true,
+                },
+                mrp: {
+                    required: true,
+                    maxlength: 12,
+                    number: true,
+                    decimal: true,
+                },
+                cost_price: {
+                    maxlength: 12,
+                    number: true,
+                    decimal: true,
+                },
+                list_price: {
+                    maxlength: 12,
+                    number: true,
+                    decimal: true,
+                },
+                display_order: {
+                    min: 0,
+                    number: true,
+                },
+
             },
             submitHandler: function(form) {
                 let formData = new FormData($(form_id)[0]);
@@ -266,8 +596,10 @@ app.component('partForm', {
                         $('.submit').button('reset');
                         custom_noty('error', 'Something went wrong at server');
                     });
-            }
+
+            },
         });
+        //UPDATED BY KARTHICK T ON 15-07-2020
     }
 });
 //------------------------------------------------------------------------------------------------------------------------
