@@ -21,6 +21,7 @@ class Part extends BaseModel {
 			$relationships = [
 				'uom',
 				'taxCode',
+				'repair_order_parts',
 			];
 
 		} else if ($action == 'read') {
@@ -28,11 +29,13 @@ class Part extends BaseModel {
 				'uom',
 				'taxCode',
 				'taxCode.taxes',
+				'repair_order_parts',
 			];
 		} else if ($action == 'options') {
 			$relationships = [
 				'uom',
 				'taxCode',
+				'repair_order_parts',
 			];
 		}
 
@@ -131,6 +134,10 @@ class Part extends BaseModel {
 	}
 	public function repair_order() {
 		return $this->belongsToMany('App\RepairOrder');
+	}
+
+	public function repair_order_parts() {
+		return $this->belongsToMany('App\RepairOrder', 'repair_order_part', 'part_id', 'repair_order_id');
 	}
 
 	// Static operations --------------------------------------------------------------
