@@ -189,8 +189,10 @@ app.component('partForm', {
                 }
             }
         ).then(function(response) {
-            self.part_category_list = response.data.category_list;
-            self.part_sub_category_list = response.data.sub_category_list;
+            //UPDATED BY KARTHICK T ON 30-07-2020
+            self.part_aggregate_list = response.data.aggregate_list;
+            self.part_sub_aggregate_list = response.data.sub_aggregate_list;
+            //UPDATED BY KARTHICK T ON 30-07-2020
             self.components_list = response.data.components_list;
             self.vehicle_make_list = response.data.vehicle_make_list;
             self.vehicle_model_list = response.data.vehicle_model_list;
@@ -205,12 +207,13 @@ app.component('partForm', {
             self.years_list = response.data.year_list;
             self.fuel_type_list = response.data.fuel_type_list;
             self.vehicle_type_list = response.data.vehicle_type_list;
+            self.rack_parts = response.data.rack_parts;
             
             $('#alternate_part_ids').val(self.alt_parts_ids.join());
             $('#upsell_part_ids').val(self.upsell_parts_ids.join());
 
             if (response.data.action == "Edit") {
-                $scope.getSubCategoryBasedonCategory(self.part.category_id);
+                $scope.getSubAggregateBasedonCategory(self.part.aggregate_id);
             }
 
             $rootScope.loading = false;
@@ -234,16 +237,16 @@ app.component('partForm', {
 
         $("input:text:visible:first").focus();
 
-        $scope.getSubCategoryBasedonCategory = function(part_category_id) {
+        $scope.getSubAggregateBasedonCategory = function(part_category_id) {
             if (part_category_id) {
                 $.ajax({
-                        url: laravel_routes['getItemSubCategoryByCategory'],
+                        url: laravel_routes['getItemSubAggregateByAggregate'],
                         method: "POST",
                         data: { part_category_id: part_category_id },
                     })
                     .done(function(res) {
-                        self.part_sub_category_list = [];
-                        self.part_sub_category_list = res.part_sub_categories_list;
+                        self.part_sub_aggregate_list = [];
+                        self.part_sub_aggregate_list = res.part_sub_categories_list;
                         $scope.$apply()
                     })
                     .fail(function(xhr) {
@@ -481,6 +484,35 @@ app.component('partForm', {
             self.upsell_parts.splice(index, 1);
         }
 
+        //ADDED BY KARTHICK T ON 30-07-2020
+        self.addNewRack = function() {
+            self.rack_parts.push({
+                name: '',
+                quantity: '',
+            });
+        }
+
+        $scope.deleteRackModelconfirm = function(index, part_rack_id) {
+            $('#delete_rack_mapping_id').val(part_rack_id);
+            $('#delete_rack_mapping_index').val(index);
+            console.log('part_rack_id  : '+part_rack_id);
+        }
+
+        $scope.deleteRack = function() {
+            var index = $('#delete_rack_mapping_index').val();
+            var rack_mapping_id = $('#delete_rack_mapping_id').val();
+            if (rack_mapping_id) {
+                $http({
+                    url : laravel_routes['deletePartRack'],
+                    method : "POST",
+                    params: {'rack_id' : rack_mapping_id}
+                }).then(function(response) {
+                    
+                });
+            }
+            self.rack_parts.splice(index, 1);
+        }
+        //ADDED BY KARTHICK T ON 30-07-2020
 
         jQuery.validator.addMethod("decimal", function(value, element) {
             return this.optional(element) || /^\d{0,10}(\.\d{0,2})?$/i.test(value);
@@ -535,12 +567,6 @@ app.component('partForm', {
                     maxlength: 11,
                     min: 0,
                 },
-                aggregate: {
-                    maxlength: 30,
-                },
-                sub_aggregate: {
-                    maxlength: 30,
-                },
                 tax_code_id: {
                     required: true,
                 },
@@ -561,6 +587,7 @@ app.component('partForm', {
                     decimal: true,
                 },
                 display_order: {
+                    required: true,
                     min: 0,
                     number: true,
                 },

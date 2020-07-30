@@ -2,8 +2,6 @@
 
 namespace Abs\PartPkg;
 use Abs\GigoPkg\TaxCode;
-use Abs\ServiceInvoicePkg\ServiceItemCategory;
-use Abs\ServiceInvoicePkg\ServiceItemSubCategory;
 use App\Http\Controllers\Controller;
 use App\Part;
 use App\PartAlternate;
@@ -13,6 +11,9 @@ use App\VehicleMake;
 use App\VehicleModel;
 use App\Uom;
 use App\Config;
+use App\Aggregate;
+use App\SubAggregate;
+use App\PartRack;
 use Auth;
 use Carbon\Carbon;
 use DB;
@@ -103,8 +104,8 @@ class PartController extends Controller {
 	public function getPartFormData(Request $request) {
 		$id = $request->id;
 		//UPDATED BY KARTHICK T ON 15-07-2020
-		$this->data['category_list'] = collect(ServiceItemCategory::where('company_id', Auth::user()->company_id)->select('name', 'id')->get())->prepend(['id' => '', 'name' => 'Select Item Category']);
-		$this->data['sub_category_list'] = [];
+		$this->data['aggregate_list'] = collect(Aggregate::select('name', 'id')->get())->prepend(['id' => '', 'name' => 'Select Item Aggregate']);
+		$this->data['sub_aggregate_list'] = [];
 		$this->data['components_list'] = [];
 		$this->data['vehicle_make_list'] = collect(VehicleMake::where('company_id', Auth::user()->company_id)->select('name', 'id')->groupBy('name')->get())->prepend(['id' => '', 'name' => 'Select Vehicle Make']);
 		$this->data['year_list'] = collect(Config::where('config_type_id', 125)->select('name', 'id')->groupBy('name')->get())->prepend(['id' => '', 'name' => 'Select Vehicle Year']);
@@ -124,6 +125,9 @@ class PartController extends Controller {
 			$this->data['alt_parts_ids'] = [];
 			$this->data['upsell_parts_ids'] = [];
 			$this->data['part_attachments'] = [];
+			//ADDED BY KARTHICK T ON 30-07-2020
+			$this->data['rack_parts'] = [];
+			//ADDED BY KARTHICK T ON 30-07-2020
 
 		} else {
 			$part = Part::select(
@@ -175,6 +179,13 @@ class PartController extends Controller {
 				->get();
 
 			$this->data['vehicle_mappings'] = $vehicle_mappings;
+
+			//ADDED BY KARTHICK T ON 30-07-2020
+			$this->data['rack_parts'] = PartRack::leftjoin('parts','parts.id','part_racks.part_id')
+				->where('part_id',$id)
+				->select('part_racks.*')
+				->get();
+			//ADDED BY KARTHICK T ON 30-07-2020
 
 		}
 
@@ -261,8 +272,13 @@ class PartController extends Controller {
 			$part->code = $request->code;
 			$part->name = $request->name;
 			$part->rate = $request->rate;
-			$part->category_id = $request->category_id;
-			$part->sub_category_id = $request->sub_category_id;
+			//UPDATED BY KARTHICK T ON 30-07-2020
+			$part->aggregate_id = $request->aggregate_id;
+			$part->sub_aggregate_id = $request->sub_aggregate_id;
+			$part->variant = $request->variant;
+			$part->brand = $request->brand;
+			$part->component = $request->component;
+			//UPDATED BY KARTHICK T ON 30-07-2020
 			$part->min_sale_order_qty = $request->min_sale_order_qty;
 			$part->max_sale_order_qty = $request->max_sale_order_qty;
 			$part->uom_id = $request->uom_id;
@@ -336,6 +352,22 @@ class PartController extends Controller {
 				}
 			}
 
+			//ADDED BY KARTHICK T ON 30-07-2020
+			//Part Rack Store
+			if(isset($request->rack_ids) && count($request->rack_ids) > 0){
+				foreach ($request->rack_ids as $key => $rack_id) {
+					$part_rack = PartRack::where('id',$rack_id)->first();
+					if(!$part_rack){
+						$part_rack = new PartRack();
+					}
+					$part_rack->part_id = $part->id;
+					$part_rack->name = $request->rack_name[$key];
+					$part_rack->quantity = $request->rack_qty[$key];
+					$part_rack->save();
+				}
+			}
+			//ADDED BY KARTHICK T ON 30-07-2020
+
 			DB::commit();
 			if (!($request->id)) {
 				return response()->json([
@@ -405,14 +437,14 @@ class PartController extends Controller {
 	}
 
 	//CREATED BY KARTHICK T ON 15-07-2020
-	public function getItemSubCategoryByCategory(Request $request) {
+	public function getItemSubAggregateByAggregate(Request $request) {
 		if (!empty($request->part_category_id)) {
 			$part_sub_categories_list = collect(
-				ServiceItemSubCategory::where('category_id', $request->part_category_id)
+				SubAggregate::where('aggregate_id', $request->part_category_id)
 					->select('name', 'id')
 					->get()
 				)
-				->prepend(['id' => '', 'name' => 'Select Item Sub Category']);
+				->prepend(['id' => '', 'name' => 'Select Sub Aggregate']);
 		} else {
 			$part_sub_categories_list = [];
 		}
@@ -486,4 +518,12 @@ class PartController extends Controller {
 		return response()->json($this->data);
 	}
 	//CREATED BY KARTHICK T ON 15-07-2020
+	//CREATED BY KARTHICK T ON 30-07-2020
+	public function deletePartRack(Request $request){
+		// dd($request->all());
+		if($request->rack_id){
+			$delete_rack = PartRack::where('id',$request->rack_id)->forceDelete();
+		}
+	}
+	//CREATED BY KARTHICK T ON 30-07-2020
 }

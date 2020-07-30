@@ -32,6 +32,7 @@
                                         <li><a data-target="#vehicle-mapping" data-toggle="tab" role="tab" aria-expanded="true">Vehicle Mapping</a></li>
                                         <li><a data-target="#alternate-parts" role="tab" data-toggle="tab" aria-expanded="true">Alternate Parts</a></li>
                                         <li><a data-target="#upsell-parts" data-toggle="tab" role="tab" aria-expanded="true">Upsell Parts</a></li>
+                                        <li><a data-target="#rack-parts" data-toggle="tab" role="tab" aria-expanded="true">Rack Parts</a></li>
                                     </ul>
                                 </div><!-- Filters -->
                             </div><!-- Tab Page Wrap Header -->
@@ -117,37 +118,50 @@
                                                 </div><!-- Column -->
                                                 <div class="col-md-3">
                                                     <div class="form-group">
-                                                        <label>Category / Aggregate</label>
-                                                        <ui-select ng-model="$ctrl.part.category_id" theme="select2" ng-change="getSubCategoryBasedonCategory($ctrl.part.category_id); $ctrl.part.sub_category_id=''; $ctrl.part.component_id=''" ng-init="getSubCategoryBasedonCategory($ctrl.part.category_id)">
-                                                            <ui-select-match placeholder="Select Category">
+                                                        <label>Aggregate</label>
+                                                        <ui-select ng-model="$ctrl.part.aggregate_id" theme="select2" ng-change="getSubAggregateBasedonCategory($ctrl.part.aggregate_id); $ctrl.part.sub_aggregate_id='';" ng-init="getSubAggregateBasedonCategory($ctrl.part.aggregate_id)">
+                                                            <ui-select-match placeholder="Select Aggregate">
                                                                 {{$select.selected.name || $select.selected}}
                                                             </ui-select-match>
-                                                            <ui-select-choices repeat="i.id as i in $ctrl.part_category_list | propsFilter: {name: $select.search}">
+                                                            <ui-select-choices repeat="i.id as i in $ctrl.part_aggregate_list | propsFilter: {name: $select.search}">
                                                                 <div ng-bind-html="i.name | highlight: $select.search"></div>
                                                             </ui-select-choices>
                                                         </ui-select>
-                                                        <input type="hidden" id="category_id" name="category_id" value="{{$ctrl.part.category_id}}" class="">
+                                                        <input type="hidden" id="aggregate_id" name="aggregate_id" value="{{$ctrl.part.aggregate_id}}" class="">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-3">
                                                     <div class="form-group">
-                                                        <label>Item Sub Category / Sub Aggregate</label>
-                                                        <ui-select ng-model="$ctrl.part.sub_category_id" theme="select2" ng-change="getComponentBasedonSubCategory($ctrl.part.sub_category_id); $ctrl.part.component_id=''" ng-init="getComponentBasedonSubCategory($ctrl.part.sub_category_id)">
-                                                            <ui-select-match placeholder="Select Item Sub Category">
+                                                        <label>Item Sub Aggregate</label>
+                                                        <ui-select ng-model="$ctrl.part.sub_aggregate_id" theme="select2" ng-change="getComponentBasedonSubCategory($ctrl.part.sub_aggregate_id);" ng-init="getComponentBasedonSubCategory($ctrl.part.sub_aggregate_id)">
+                                                            <ui-select-match placeholder="Select Item Sub Aggregate">
                                                                 {{$select.selected.name || $select.selected}}
                                                             </ui-select-match>
-                                                            <ui-select-choices repeat="i.id as i in $ctrl.part_sub_category_list | propsFilter: {name: $select.search}">
+                                                            <ui-select-choices repeat="i.id as i in $ctrl.part_sub_aggregate_list | propsFilter: {name: $select.search}">
                                                                 <div ng-bind-html="i.name | highlight: $select.search"></div>
                                                             </ui-select-choices>
                                                         </ui-select>
-                                                        <input type="hidden" id="part_sub_category_id" name="sub_category_id" value="{{$ctrl.part.sub_category_id}}">
+                                                        <input type="hidden" id="part_sub_aggregate_id" name="sub_aggregate_id" value="{{$ctrl.part.sub_aggregate_id}}">
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="row custom-row">
                                                 <div class="col-md-3">
                                                     <div class="form-group">
+                                                        <label>Variant</label>
+                                                        <input type="text" name="variant" ng-model='$ctrl.part.variant' class="form-control" placeholder="Enter Variant" autocomplete="off">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>Brand</label>
+                                                        <input type="text" name="brand" ng-model='$ctrl.part.brand' class="form-control" placeholder="Enter Brand" autocomplete="off">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
                                                         <label>Component</label>
+                                                        <input type="text" name="component" ng-model='$ctrl.part.component' class="form-control" placeholder="Enter Component" autocomplete="off">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-3">
@@ -155,6 +169,8 @@
                                                         <label>Supplier Category</label>
                                                     </div>
                                                 </div>
+                                            </div>
+                                            <div class="row custom-row">
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <lable>Minimum Sale Order Quantity</lable>
@@ -167,8 +183,6 @@
                                                         <input type="text" name="max_sale_order_qty" ng-model='$ctrl.part.max_sale_order_qty' class="form-control" placeholder="Enter Maximum Sale Order Quantity" autocomplete="off">
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div class="row custom-row">
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <lable>Pack Size</lable>
@@ -180,6 +194,8 @@
                                                         <label>Vehicle Category</label>
                                                     </div>
                                                 </div>
+                                            </div>
+                                            <div class="row custom-row">
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <lable>Height</lable>
@@ -192,8 +208,6 @@
                                                         <input type="text" name="width" ng-model='$ctrl.part.width' class="form-control" placeholder="Enter width" autocomplete="off">
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div class="row custom-row">
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <lable>Weight</lable>
@@ -211,6 +225,8 @@
                                                         </div><!-- Input Group -->
                                                     </div>
                                                 </div>
+                                            </div>
+                                            <div class="row custom-row">
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <lable>Item Name in Local Language</lable>
@@ -223,8 +239,6 @@
                                                         <input type="text" name="product_video_link" ng-model='$ctrl.part.product_video_link' class="form-control" placeholder="Enter Video Link" autocomplete="off">
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div class="row custom-row">
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label>MRP (₹)<span class="mandatory">*</span></label>
@@ -237,6 +251,8 @@
                                                         <input type="text" name="list_price" ng-model='$ctrl.part.list_price' class="form-control " placeholder="Enter List Price" autocomplete="off">
                                                     </div><!-- Field -->
                                                 </div><!-- column -->
+                                            </div>
+                                            <div class="row custom-row">
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label>Cost Price (₹)</label>
@@ -248,8 +264,6 @@
                                                         <label>Pack size group</label>
                                                     </div><!-- Field -->
                                                 </div><!-- column -->
-                                            </div>
-                                            <div class="row custom-row">
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label>Product Group</label>
@@ -257,13 +271,15 @@
                                                 </div><!-- column -->
                                                 <div class="col-md-3">
                                                     <div class="form-group">
-                                                        <label>Display Order</label>
+                                                        <label>Display Order<span class="mandatory">*</span></label>
                                                         <input type="text" name="display_order" ng-model='$ctrl.part.display_order' class="form-control" placeholder="Enter Display Order" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
                                                     </div><!-- Field -->
                                                 </div><!-- column -->
+                                            </div>
+                                            <div class="row custom-row">
                                                 <div class="col-md-3">
                                                     <div class="form-group">
-                                                        <label>Line Code / Item Group<span class="mandatory">*</span></label>
+                                                        <label>Line Code / Item Group</label>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-3">
@@ -514,6 +530,44 @@
                                             <div class="row">
                                                 <div class="col-md-12 text-right">
                                                     <a class="btn btn-primary btn-prev">Previous</a>
+                                                    <a class="btn btn-primary btn-nxt">Next</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div><!-- Tab Pane -->
+                                    <div class="tab-pane fade" id="rack-parts" data-animation="fadeInUp" data-animation-delay="300">
+                                        <div class="form-page">
+                                            <div class="additional-wrap" id="rack_part_fields" ng-repeat="(index, rack_part) in $ctrl.rack_parts">
+                                                <div class="row custom-row">
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <lable>Rack Name<span class="mandatory">*</span></lable>
+                                                            <input type="text" id="rack_name[{{index}}]" name="rack_name[{{index}}]" value="{{rack_part.name}}" class="form-control required" autocomplete="off">
+                                                            <input type="hidden" id="rack_ids[{{index}}]" name="rack_ids[{{index}}]" value="{{rack_part.id}}" class="form-control">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <lable>Rack Qty<span class="mandatory">*</span></lable>
+                                                            <input type="text" id="rack_qty[{{index}}]" name="rack_qty[{{index}}]" value="{{rack_part.quantity}}" class="form-control required" oninput="this.value = this.value.replace(/[^0-9]/g, '');" autocomplete="off">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <a href="javascript:;" data-toggle="modal" data-target="#rack-delete-modal" ng-click="deleteRackModelconfirm(index, rack_part.id)" title="Delete">
+                                                            <img src="./public/themes/theme2/img/content/table/close-circle-active.svg" class="img-responsive" />
+                                                        </a>
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                    </div>
+                                                </div>
+                                            </div> <!-- additional wrap --->
+                                            <hr class="md">
+                                            <button type="button" class="btn btn-md btn-primary" ng-click="$ctrl.addNewRack()">Add</button>
+                                        </div><!-- Form Page -->
+                                        <div class="tab-pane-footer">
+                                            <div class="row">
+                                                <div class="col-md-12 text-right">
+                                                    <a class="btn btn-primary btn-prev">Previous</a>
                                                     <button type="submit" class="btn btn-primary submit">Submit</button>
                                                 </div>
                                             </div>
@@ -549,4 +603,26 @@
             </div><!-- Modal Body -->
         </div><!-- Modal Content -->
     </div><!-- Modal Dialog -->
-</div><!-- Modal Content
+</div><!-- Modal Content -->
+<!-- Modal -->
+<div class="modal fade alert-modal failure" id="rack-delete-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="modal-alert">
+                    <div class="alert-item">
+                        <div class="alert-details bg-red">
+                            <p>Are You Sure want to Delete?</p>
+                        </div>
+                    </div>
+                    <div class="alert-button">
+                        <input type="hidden" name="delete_rack_mapping_id" id="delete_rack_mapping_id" value="">
+                        <input type="hidden" name="delete_rack_mapping_index" id="delete_rack_mapping_index" value="">
+                        <button type="button" class="btn btn-grey" data-dismiss="modal">No</button>
+                        <button type="button" id="accept" ng-click="deleteRack()" data-dismiss="modal" class="btn btn-rose">Yes</button>
+                    </div>
+                </div><!-- Modal Alert -->
+            </div><!-- Modal Body -->
+        </div><!-- Modal Content -->
+    </div><!-- Modal Dialog -->
+</div><!-- Modal Content -->
