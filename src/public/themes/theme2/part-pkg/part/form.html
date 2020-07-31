@@ -103,20 +103,6 @@
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-3">
-                                                    <div class="input-text form-group">
-                                                        <label>
-                                                            Active Status
-                                                            <sup class="mandatory">*</sup>
-                                                        </label>
-                                                        <div class="tab-switch">
-                                                            <md-switch ng-model="$ctrl.switch_value" aria-label="Switch 1" ng-true-value="'Inactive'" ng-false-value="'Active'" class="md-warn">
-                                                                {{ $ctrl.switch_value }}
-                                                            </md-switch>
-                                                            <input type="hidden" name="status" value="{{$ctrl.switch_value}}">
-                                                        </div>
-                                                    </div><!-- Form Group -->
-                                                </div><!-- Column -->
-                                                <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label>Aggregate</label>
                                                         <ui-select ng-model="$ctrl.part.aggregate_id" theme="select2" ng-change="getSubAggregateBasedonCategory($ctrl.part.aggregate_id); $ctrl.part.sub_aggregate_id='';" ng-init="getSubAggregateBasedonCategory($ctrl.part.aggregate_id)">
@@ -144,14 +130,14 @@
                                                         <input type="hidden" id="part_sub_aggregate_id" name="sub_aggregate_id" value="{{$ctrl.part.sub_aggregate_id}}">
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div class="row custom-row">
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label>Variant</label>
                                                         <input type="text" name="variant" ng-model='$ctrl.part.variant' class="form-control" placeholder="Enter Variant" autocomplete="off">
                                                     </div>
                                                 </div>
+                                            </div>
+                                            <div class="row custom-row">
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label>Brand</label>
@@ -169,14 +155,14 @@
                                                         <label>Supplier Category</label>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div class="row custom-row">
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <lable>Minimum Sale Order Quantity</lable>
                                                         <input type="text" name="min_sale_order_qty" ng-model='$ctrl.part.min_sale_order_qty' class="form-control" placeholder="Enter Minimum Sale Order Quantity" autocomplete="off">
                                                     </div>
                                                 </div>
+                                            </div>
+                                            <div class="row custom-row">
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <lable>Maximum Sale Order Quantity</lable>
@@ -194,14 +180,14 @@
                                                         <label>Vehicle Category</label>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div class="row custom-row">
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <lable>Height</lable>
                                                         <input type="text" name="height" ng-model='$ctrl.part.height' class="form-control" placeholder="Enter height" autocomplete="off">
                                                     </div>
                                                 </div>
+                                            </div>
+                                            <div class="row custom-row">
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <lable>Width</lable>
@@ -225,14 +211,14 @@
                                                         </div><!-- Input Group -->
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div class="row custom-row">
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <lable>Item Name in Local Language</lable>
                                                         <input type="text" name="item_name_in_local_lang" ng-model='$ctrl.part.item_name_in_local_lang' class="form-control" placeholder="Enter Item Name(Local Language)" autocomplete="off">
                                                     </div>
                                                 </div>
+                                            </div>
+                                            <div class="row custom-row">
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <lable>Product Video link</lable>
@@ -251,14 +237,14 @@
                                                         <input type="text" name="list_price" ng-model='$ctrl.part.list_price' class="form-control " placeholder="Enter List Price" autocomplete="off">
                                                     </div><!-- Field -->
                                                 </div><!-- column -->
-                                            </div>
-                                            <div class="row custom-row">
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label>Cost Price (₹)</label>
                                                         <input type="text" name="cost_price" ng-model='$ctrl.part.cost_price' class="form-control" placeholder="Enter Cost price" autocomplete="off">
                                                     </div><!-- Field -->
                                                 </div><!-- column -->
+                                            </div>
+                                            <div class="row custom-row">
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label>Pack size group</label>
@@ -275,18 +261,32 @@
                                                         <input type="text" name="display_order" ng-model='$ctrl.part.display_order' class="form-control" placeholder="Enter Display Order" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
                                                     </div><!-- Field -->
                                                 </div><!-- column -->
-                                            </div>
-                                            <div class="row custom-row">
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label>Line Code / Item Group</label>
                                                     </div>
                                                 </div>
+                                            </div>
+                                            <div class="row custom-row">
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label>Supplier Package Type</label>
                                                     </div>
                                                 </div>
+                                                <div class="col-md-3">
+                                                    <div class="input-text form-group">
+                                                        <label>
+                                                            Active Status
+                                                            <sup class="mandatory">*</sup>
+                                                        </label>
+                                                        <div class="tab-switch">
+                                                            <md-switch ng-model="$ctrl.switch_value" aria-label="Switch 1" ng-true-value="'Inactive'" ng-false-value="'Active'" class="md-warn">
+                                                                {{ $ctrl.switch_value }}
+                                                            </md-switch>
+                                                            <input type="hidden" name="status" value="{{$ctrl.switch_value}}">
+                                                        </div>
+                                                    </div><!-- Form Group -->
+                                                </div><!-- Column -->
                                             </div>
                                         </div><!-- Form Page -->
                                         <div class="tab-pane-footer">

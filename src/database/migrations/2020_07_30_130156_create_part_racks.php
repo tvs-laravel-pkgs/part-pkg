@@ -13,7 +13,7 @@ class CreatePartRacks extends Migration
      */
     public function up()
     {
-        Schema::create('part_racks', function (Blueprint $table) {
+        Schema::create('part_rack', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedinteger('part_id');
             $table->string('name');
@@ -30,6 +30,6 @@ class CreatePartRacks extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('part_racks');
+        Schema::dropIfExists('part_rack');
     }
 }

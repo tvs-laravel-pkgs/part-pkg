@@ -132,8 +132,10 @@ class PartController extends Controller {
 		} else {
 			$part = Part::select(
 				'parts.*',
+				'sub_aggregates.aggregate_id as aggregate_id',
 				DB::raw('COALESCE(DATE_FORMAT(item_available_date,"%d-%m-%Y"), "--") as item_available_date')
-			)->withTrashed()
+			)->leftJoin('sub_aggregates','sub_aggregates.id','parts.sub_aggregate_id')
+			->withTrashed()
 			->find($id);
 			$action = 'Edit';
 
@@ -181,9 +183,9 @@ class PartController extends Controller {
 			$this->data['vehicle_mappings'] = $vehicle_mappings;
 
 			//ADDED BY KARTHICK T ON 30-07-2020
-			$this->data['rack_parts'] = PartRack::leftjoin('parts','parts.id','part_racks.part_id')
+			$this->data['rack_parts'] = PartRack::leftjoin('parts','parts.id','part_rack.part_id')
 				->where('part_id',$id)
-				->select('part_racks.*')
+				->select('part_rack.*')
 				->get();
 			//ADDED BY KARTHICK T ON 30-07-2020
 
@@ -273,7 +275,6 @@ class PartController extends Controller {
 			$part->name = $request->name;
 			$part->rate = $request->rate;
 			//UPDATED BY KARTHICK T ON 30-07-2020
-			$part->aggregate_id = $request->aggregate_id;
 			$part->sub_aggregate_id = $request->sub_aggregate_id;
 			$part->variant = $request->variant;
 			$part->brand = $request->brand;

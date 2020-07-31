@@ -13,7 +13,7 @@ class CreateAggregateAndSubAggregate extends Migration
      */
     public function up()
     {
-        Schema::create('aggregate', function (Blueprint $table) {
+        Schema::create('aggregates', function (Blueprint $table) {
             $table->increments('id');
             $table->string('code');
             $table->string('name');
@@ -27,7 +27,7 @@ class CreateAggregateAndSubAggregate extends Migration
             $table->foreign('updated_by')->references('id')->on('users')->onDelete('CASCADE')->onUpdate('cascade');
             $table->foreign('deleted_by')->references('id')->on('users')->onDelete('CASCADE')->onUpdate('cascade');
         });
-        Schema::create('sub_aggregate', function (Blueprint $table) {
+        Schema::create('sub_aggregates', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedinteger('aggregate_id');
             $table->string('code');
@@ -38,7 +38,7 @@ class CreateAggregateAndSubAggregate extends Migration
             $table->timestamps();
 
             $table->unique('code');
-            $table->foreign('aggregate_id')->references('id')->on('aggregate')->onDelete('CASCADE')->onUpdate('cascade');
+            $table->foreign('aggregate_id')->references('id')->on('aggregates')->onDelete('CASCADE')->onUpdate('cascade');
             $table->foreign('created_by')->references('id')->on('users')->onDelete('CASCADE')->onUpdate('cascade');
             $table->foreign('updated_by')->references('id')->on('users')->onDelete('CASCADE')->onUpdate('cascade');
             $table->foreign('deleted_by')->references('id')->on('users')->onDelete('CASCADE')->onUpdate('cascade');
@@ -52,7 +52,7 @@ class CreateAggregateAndSubAggregate extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('aggregate');
-        Schema::dropIfExists('sub_aggregate');
+        Schema::dropIfExists('sub_aggregates');
+        Schema::dropIfExists('aggregates');
     }
 }
