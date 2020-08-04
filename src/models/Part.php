@@ -13,7 +13,7 @@ class Part extends BaseModel {
 	protected $table = 'parts';
 	public $timestamps = true;
 	protected $fillable =
-		["id", "company_id", "code", "name", "uom_id", "rate", "tax_code_id"]
+		["id", "company_id", "code", "name", "uom_id", "rate", "tax_code_id", "mrp"]
 	;
 
 	public static function relationships($action = 'index') {

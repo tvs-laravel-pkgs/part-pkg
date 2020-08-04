@@ -221,6 +221,10 @@ app.component('partForm', {
                 'rate': {
                     required: true,
                     number: true,
+                },
+                'mrp': {
+                    required: true,
+                    number: true,
                 }
             },
             messages: {

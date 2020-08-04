@@ -160,6 +160,10 @@ class PartController extends Controller {
 					'required:true',
 					'numeric',
 				],
+				'mrp' => [
+					'required:true',
+					'numeric',
+				],
 			], $error_messages);
 			if ($validator->fails()) {
 				return response()->json(['success' => false, 'errors' => $validator->errors()->all()]);
