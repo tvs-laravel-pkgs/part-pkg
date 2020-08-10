@@ -133,7 +133,16 @@
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label>Variant</label>
-                                                        <input type="text" name="variant" ng-model='$ctrl.part.variant' class="form-control" placeholder="Enter Variant" autocomplete="off">
+                                                        <ui-select ng-model="$ctrl.part.variant_id" theme="select2">
+                                                            <ui-select-match placeholder="Select Variant">
+                                                                {{$select.selected.name || $select.selected}}
+                                                            </ui-select-match>
+                                                            <ui-select-choices repeat="i.id as i in $ctrl.variant_list | propsFilter: {name: $select.search}">
+                                                                <div ng-bind-html="i.name | highlight: $select.search"></div>
+                                                            </ui-select-choices>
+                                                        </ui-select>
+                                                        <input type="hidden" id="part_variant_id" name="variant_id" value="{{$ctrl.part.variant_id}}">
+                                                        <!--<input type="text" name="variant" ng-model='$ctrl.part.variant' class="form-control" placeholder="Enter Variant" autocomplete="off">-->
                                                     </div>
                                                 </div>
                                             </div>
@@ -141,13 +150,31 @@
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label>Brand</label>
-                                                        <input type="text" name="brand" ng-model='$ctrl.part.brand' class="form-control" placeholder="Enter Brand" autocomplete="off">
+                                                        <ui-select ng-model="$ctrl.part.brand_id" theme="select2">
+                                                            <ui-select-match placeholder="Select Brand">
+                                                                {{$select.selected.name || $select.selected}}
+                                                            </ui-select-match>
+                                                            <ui-select-choices repeat="i.id as i in $ctrl.brand_list | propsFilter: {name: $select.search}">
+                                                                <div ng-bind-html="i.name | highlight: $select.search"></div>
+                                                            </ui-select-choices>
+                                                        </ui-select>
+                                                        <input type="hidden" id="part_brand_id" name="brand_id" value="{{$ctrl.part.brand_id}}">
+                                                        <!--<input type="text" name="brand" ng-model='$ctrl.part.brand' class="form-control" placeholder="Enter Brand" autocomplete="off">-->
                                                     </div>
                                                 </div>
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label>Component</label>
-                                                        <input type="text" name="component" ng-model='$ctrl.part.component' class="form-control" placeholder="Enter Component" autocomplete="off">
+                                                        <ui-select ng-model="$ctrl.part.component_id" theme="select2">
+                                                            <ui-select-match placeholder="Select Component">
+                                                                {{$select.selected.name || $select.selected}}
+                                                            </ui-select-match>
+                                                            <ui-select-choices repeat="i.id as i in $ctrl.component_list | propsFilter: {name: $select.search}">
+                                                                <div ng-bind-html="i.name | highlight: $select.search"></div>
+                                                            </ui-select-choices>
+                                                        </ui-select>
+                                                        <input type="hidden" id="part_component_id" name="component_id" value="{{$ctrl.part.component_id}}">
+                                                        <!--<input type="text" name="component" ng-model='$ctrl.part.component' class="form-control" placeholder="Enter Component" autocomplete="off">-->
                                                     </div>
                                                 </div>
                                                 <div class="col-md-3">
@@ -206,7 +233,7 @@
                                                         <div class="input-group date" data-provide="datepicker">
                                                             <input type="text" name="item_available_date" ng-model='$ctrl.part.item_available_date' class="form-control" placeholder="Enter Available Date" autocomplete="off">
                                                             <div class="input-group-addon addon-icon">
-                                                                <img class="img-responsive item_available_date" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image"/>
+                                                                <img class="img-responsive item_available_date" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
                                                             </div>
                                                         </div><!-- Input Group -->
                                                     </div>
@@ -483,8 +510,7 @@
                                                 <div class="col-md-2">
                                                     <div class="form-group">
                                                         <label></label>
-                                                        <button class="btn btn_add_alternate_img"
-                                                        ng-if="$ctrl.upsell_part.code.id != null" id="btn_upsell_add" value="{{$ctrl.upsell_part.code.id}}">Add</button>
+                                                        <button class="btn btn_add_alternate_img" ng-if="$ctrl.upsell_part.code.id != null" id="btn_upsell_add" value="{{$ctrl.upsell_part.code.id}}">Add</button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -542,7 +568,15 @@
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <lable>Rack Name<span class="mandatory">*</span></lable>
-                                                            <input type="text" id="rack_name[{{index}}]" name="rack_name[{{index}}]" value="{{rack_part.name}}" class="form-control required" autocomplete="off">
+                                                            <ui-select ng-model="rack_part.part_rack_id" theme="select2">
+                                                                <ui-select-match placeholder="Select Rack">
+                                                                    {{$select.selected.name || $select.selected}}
+                                                                </ui-select-match>
+                                                                <ui-select-choices repeat="i.id as i in $ctrl.rack_list | propsFilter: {name: $select.search}">
+                                                                    <div ng-bind-html="i.name | highlight: $select.search"></div>
+                                                                </ui-select-choices>
+                                                            </ui-select>
+                                                            <input type="hidden" id="part_rack_ids[{{index}}]" name="part_rack_ids[{{index}}]" value="{{rack_part.part_rack_id}}" class="form-control required">
                                                             <input type="hidden" id="rack_ids[{{index}}]" name="rack_ids[{{index}}]" value="{{rack_part.id}}" class="form-control">
                                                         </div>
                                                     </div>

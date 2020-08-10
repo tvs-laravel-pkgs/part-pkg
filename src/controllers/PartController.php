@@ -111,6 +111,10 @@ class PartController extends Controller {
 		$this->data['year_list'] = collect(Config::where('config_type_id', 125)->select('name', 'id')->groupBy('name')->get())->prepend(['id' => '', 'name' => 'Select Vehicle Year']);
 		$this->data['fuel_type_list'] = collect(Config::where('config_type_id', 126)->select('name', 'id')->groupBy('name')->get())->prepend(['id' => '', 'name' => 'Select Fuel Type']);
 		$this->data['vehicle_type_list'] = collect(Config::where('config_type_id', 127)->select('name', 'id')->groupBy('name')->get())->prepend(['id' => '', 'name' => 'Select Vehicle Type']);
+		$this->data['variant_list'] = collect(Config::where('config_type_id', 132)->select('name', 'id')->groupBy('name')->get())->prepend(['id' => '', 'name' => 'Select Variant']);
+		$this->data['brand_list'] = collect(Config::where('config_type_id', 131)->select('name', 'id')->groupBy('name')->get())->prepend(['id' => '', 'name' => 'Select Brand']);
+		$this->data['component_list'] = collect(Config::where('config_type_id', 133)->select('name', 'id')->groupBy('name')->get())->prepend(['id' => '', 'name' => 'Select Component']);
+		$this->data['rack_list'] = collect(Config::where('config_type_id', 134)->select('name', 'id')->groupBy('name')->get())->prepend(['id' => '', 'name' => 'Select Rack']);
 
 		$this->data['vehicle_model_list'] = new VehicleModel;
 		
@@ -276,9 +280,9 @@ class PartController extends Controller {
 			$part->rate = $request->rate;
 			//UPDATED BY KARTHICK T ON 30-07-2020
 			$part->sub_aggregate_id = $request->sub_aggregate_id;
-			$part->variant = $request->variant;
-			$part->brand = $request->brand;
-			$part->component = $request->component;
+			$part->variant_id = $request->variant_id;
+			$part->brand_id = $request->brand_id;
+			$part->component_id = $request->component_id;
 			//UPDATED BY KARTHICK T ON 30-07-2020
 			$part->min_sale_order_qty = $request->min_sale_order_qty;
 			$part->max_sale_order_qty = $request->max_sale_order_qty;
@@ -362,7 +366,7 @@ class PartController extends Controller {
 						$part_rack = new PartRack();
 					}
 					$part_rack->part_id = $part->id;
-					$part_rack->name = $request->rack_name[$key];
+					$part_rack->part_rack_id = $request->part_rack_ids[$key];
 					$part_rack->quantity = $request->rack_qty[$key];
 					$part_rack->save();
 				}

@@ -208,7 +208,11 @@ app.component('partForm', {
             self.fuel_type_list = response.data.fuel_type_list;
             self.vehicle_type_list = response.data.vehicle_type_list;
             self.rack_parts = response.data.rack_parts;
-            
+            self.variant_list = response.data.variant_list;
+            self.brand_list = response.data.brand_list;
+            self.component_list = response.data.component_list;
+            self.rack_list = response.data.rack_list;
+
             $('#alternate_part_ids').val(self.alt_parts_ids.join());
             $('#upsell_part_ids').val(self.upsell_parts_ids.join());
 
@@ -272,7 +276,7 @@ app.component('partForm', {
                     $scope.$apply()
 
                 })
-                .fail(function(xhr) {    
+                .fail(function(xhr) {
                     console.log(xhr);
                 });
         }
@@ -374,14 +378,14 @@ app.component('partForm', {
                 return [];
             }
         }
-        
+
         //Add Alternate Parts
         $(document).on('click', '#btn_alt_add', function() {
             var add_part_id = $(this).attr('value');
             $.ajax({
                 url: laravel_routes['addNewParts'],
                 type: 'get',
-                data: {'add_part_id': add_part_id},
+                data: { 'add_part_id': add_part_id },
                 success: function(response) {
                     var alt_response_parts = response.new_parts;
                     self.alt_parts_ids.push(alt_response_parts.id);
@@ -439,7 +443,7 @@ app.component('partForm', {
             $.ajax({
                 url: laravel_routes['addNewParts'],
                 type: 'get',
-                data: {'add_part_id': add_part_id},
+                data: { 'add_part_id': add_part_id },
                 success: function(response) {
                     var upsell_response_parts = response.new_parts;
                     self.upsell_parts_ids.push(upsell_response_parts.id);
@@ -495,7 +499,7 @@ app.component('partForm', {
         $scope.deleteRackModelconfirm = function(index, part_rack_id) {
             $('#delete_rack_mapping_id').val(part_rack_id);
             $('#delete_rack_mapping_index').val(index);
-            console.log('part_rack_id  : '+part_rack_id);
+            console.log('part_rack_id  : ' + part_rack_id);
         }
 
         $scope.deleteRack = function() {
@@ -503,11 +507,11 @@ app.component('partForm', {
             var rack_mapping_id = $('#delete_rack_mapping_id').val();
             if (rack_mapping_id) {
                 $http({
-                    url : laravel_routes['deletePartRack'],
-                    method : "POST",
-                    params: {'rack_id' : rack_mapping_id}
+                    url: laravel_routes['deletePartRack'],
+                    method: "POST",
+                    params: { 'rack_id': rack_mapping_id }
                 }).then(function(response) {
-                    
+
                 });
             }
             self.rack_parts.splice(index, 1);
