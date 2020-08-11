@@ -19,6 +19,9 @@ Route::group(['namespace' => 'Abs\PartPkg','middleware' => ['web', 'auth'], 'pre
 		//CREATED BY KARTHICK T ON 30-07-2020
 		Route::POST('/part/delete-rack', 'PartController@deletePartRack')->name('deletePartRack');
 		//CREATED BY KARTHICK T ON 30-07-2020
+		//ADD BY KARTHICK T ON 11-08-2020
+		Route::POST('/part/get-rack-data', 'PartController@getRackBasedOnType')->name('getRackBasedOnType');
+		//ADD BY KARTHICK T ON 11-08-2020
 		
 
 });

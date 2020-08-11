@@ -565,14 +565,28 @@
                                         <div class="form-page">
                                             <div class="additional-wrap" id="rack_part_fields" ng-repeat="(index, rack_part) in $ctrl.rack_parts">
                                                 <div class="row custom-row">
-                                                    <div class="col-md-4">
+                                                    <div class="col-md-3">
+                                                        <div class="form-group">
+                                                            <lable>Rack Type<span class="mandatory">*</span></lable>
+                                                            <ui-select ng-model="rack_part.type_id" theme="select2" ng-change="getRackBasedOnType(index, rack_part.type_id); rack_part.part_rack_id='';" ng-init="getRackBasedOnType(index, rack_part.type_id)">
+                                                                <ui-select-match placeholder="Select Rack Type">
+                                                                    {{$select.selected.name || $select.selected}}
+                                                                </ui-select-match>
+                                                                <ui-select-choices repeat="j.id as j in $ctrl.rack_type_list | propsFilter: {name: $select.search}">
+                                                                    <div ng-bind-html="j.name | highlight: $select.search"></div>
+                                                                </ui-select-choices>
+                                                            </ui-select>
+                                                            <input type="hidden" id="rack_type_id[{{index}}]" name="rack_type_id[{{index}}]" value="{{rack_part.type_id}}" class="required">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-3">
                                                         <div class="form-group">
                                                             <lable>Rack Name<span class="mandatory">*</span></lable>
                                                             <ui-select ng-model="rack_part.part_rack_id" theme="select2">
-                                                                <ui-select-match placeholder="Select Rack">
+                                                                <ui-select-match placeholder="Select Rack Name">
                                                                     {{$select.selected.name || $select.selected}}
                                                                 </ui-select-match>
-                                                                <ui-select-choices repeat="i.id as i in $ctrl.rack_list | propsFilter: {name: $select.search}">
+                                                                <ui-select-choices repeat="i.id as i in rack_part.rack_list | propsFilter: {name: $select.search}">
                                                                     <div ng-bind-html="i.name | highlight: $select.search"></div>
                                                                 </ui-select-choices>
                                                             </ui-select>
@@ -580,7 +594,7 @@
                                                             <input type="hidden" id="rack_ids[{{index}}]" name="rack_ids[{{index}}]" value="{{rack_part.id}}" class="form-control">
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-4">
+                                                    <div class="col-md-3">
                                                         <div class="form-group">
                                                             <lable>Rack Qty<span class="mandatory">*</span></lable>
                                                             <input type="text" id="rack_qty[{{index}}]" name="rack_qty[{{index}}]" value="{{rack_part.quantity}}" class="form-control required" oninput="this.value = this.value.replace(/[^0-9]/g, '');" autocomplete="off">

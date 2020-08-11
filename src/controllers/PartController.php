@@ -14,6 +14,7 @@ use App\Config;
 use App\Aggregate;
 use App\SubAggregate;
 use App\PartRack;
+use App\Rack;
 use Auth;
 use Carbon\Carbon;
 use DB;
@@ -114,9 +115,11 @@ class PartController extends Controller {
 		$this->data['variant_list'] = collect(Config::where('config_type_id', 132)->select('name', 'id')->groupBy('name')->get())->prepend(['id' => '', 'name' => 'Select Variant']);
 		$this->data['brand_list'] = collect(Config::where('config_type_id', 131)->select('name', 'id')->groupBy('name')->get())->prepend(['id' => '', 'name' => 'Select Brand']);
 		$this->data['component_list'] = collect(Config::where('config_type_id', 133)->select('name', 'id')->groupBy('name')->get())->prepend(['id' => '', 'name' => 'Select Component']);
-		$this->data['rack_list'] = collect(Config::where('config_type_id', 134)->select('name', 'id')->groupBy('name')->get())->prepend(['id' => '', 'name' => 'Select Rack']);
+		// $this->data['rack_list'] = collect(Config::where('config_type_id', 134)->select('name', 'id')->groupBy('name')->get())->prepend(['id' => '', 'name' => 'Select Rack']);
 
 		$this->data['vehicle_model_list'] = new VehicleModel;
+		$this->data['rack_type_list'] = collect(Config::where('config_type_id', 134)->select('name', 'id')->groupBy('name')->get())->prepend(['id' => '', 'name' => 'Select Rack']);
+		$this->data['rack_list'] = new Rack;
 		
 		if (!$id) {
 			$part = new Part;
@@ -188,8 +191,13 @@ class PartController extends Controller {
 
 			//ADDED BY KARTHICK T ON 30-07-2020
 			$this->data['rack_parts'] = PartRack::leftjoin('parts','parts.id','part_rack.part_id')
-				->where('part_id',$id)
-				->select('part_rack.*')
+				->leftJoin('racks','racks.id','part_rack.part_rack_id')
+				->leftJoin('configs','configs.id','racks.type_id')
+				->where('part_rack.part_id',$id)
+				->select(
+					'part_rack.*',
+					'configs.id as type_id'
+				)
 				->get();
 			//ADDED BY KARTHICK T ON 30-07-2020
 
@@ -531,4 +539,18 @@ class PartController extends Controller {
 		}
 	}
 	//CREATED BY KARTHICK T ON 30-07-2020
+	//CREATED BY KARTHICK T ON 11-08-2020
+	public function getRackBasedOnType(Request $request){
+		if (!empty($request->type_id)) {
+			$rack_list = collect(
+				Rack::select('name', 'id')
+					->where('type_id', $request->type_id)
+					->get()
+				)->prepend(['id' => '', 'name' => 'Select Rack Name']);
+		} else {
+			$rack_list = [];
+		}
+		return response()->json(['rack_list' => $rack_list]);
+	}
+	//CREATED BY KARTHICK T ON 11-08-2020
 }

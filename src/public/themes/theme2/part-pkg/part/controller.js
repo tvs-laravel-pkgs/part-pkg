@@ -212,6 +212,7 @@ app.component('partForm', {
             self.brand_list = response.data.brand_list;
             self.component_list = response.data.component_list;
             self.rack_list = response.data.rack_list;
+            self.rack_type_list = response.data.rack_type_list;
 
             $('#alternate_part_ids').val(self.alt_parts_ids.join());
             $('#upsell_part_ids').val(self.upsell_parts_ids.join());
@@ -631,6 +632,28 @@ app.component('partForm', {
             },
         });
         //UPDATED BY KARTHICK T ON 15-07-2020
+        //ADD BY KARTHICK T ON 11-08-2020
+        $scope.getRackBasedOnType = function(key, type_id) {
+            $.ajax({
+                    url: laravel_routes['getRackBasedOnType'],
+                    method: "POST",
+                    data: { type_id: type_id },
+                })
+                .done(function(res) {
+                    self.rack_parts[key].rack_list = [];
+                    $(res['rack_list']).each(function(i, v) {
+                        self.rack_parts[key].rack_list.push({
+                            id: v['id'],
+                            name: v['name'],
+                        });
+                    });
+                    $scope.$apply()
+                })
+                .fail(function(xhr) {
+                    console.log(xhr);
+                });
+        }
+        //ADD BY KARTHICK T ON 11-08-2020
     }
 });
 //------------------------------------------------------------------------------------------------------------------------
