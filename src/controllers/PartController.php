@@ -11,10 +11,10 @@ use App\VehicleMake;
 use App\VehicleModel;
 use App\Uom;
 use App\Config;
-use App\Aggregate;
-use App\SubAggregate;
+use Abs\PartPkg\Aggregate;
+use Abs\PartPkg\SubAggregate;
 use App\PartRack;
-use App\Rack;
+use Abs\PartPkg\Rack;
 use Auth;
 use Carbon\Carbon;
 use DB;
@@ -300,12 +300,13 @@ class PartController extends Controller {
 			$part->height = $request->height;
 			$part->width = $request->width;
 			$part->weight = $request->weight;
-			$part->item_available_date = date('Y-m-d',strtotime($request->item_available_date));
+			$part->item_available_date = isset($request->item_available_date) ? date('Y-m-d',strtotime($request->item_available_date)) : null;
 			$part->item_name_in_local_lang = $request->item_name_in_local_lang;
 			$part->product_video_link = $request->product_video_link;
 			$part->mrp = $request->mrp;
 			$part->list_price = $request->list_price;
 			$part->cost_price = $request->cost_price;
+			$part->discount = $request->discount;
 			$part->display_order = $request->display_order;
 			if ($request->status == 'Inactive') {
 				$part->deleted_at = Carbon::now();

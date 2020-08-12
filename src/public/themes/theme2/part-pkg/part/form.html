@@ -255,19 +255,19 @@
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label>MRP (₹)<span class="mandatory">*</span></label>
-                                                        <input type="text" name="mrp" ng-model='$ctrl.part.mrp' class="form-control required" placeholder="Enter MRP" autocomplete="off">
+                                                        <input type="text" name="mrp" ng-model='$ctrl.part.mrp' class="form-control required" placeholder="Enter MRP" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
                                                     </div><!-- Field -->
                                                 </div><!-- column -->
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label>List Price (₹)</label>
-                                                        <input type="text" name="list_price" ng-model='$ctrl.part.list_price' class="form-control " placeholder="Enter List Price" autocomplete="off">
+                                                        <input type="text" name="list_price" ng-model='$ctrl.part.list_price' class="form-control " placeholder="Enter List Price" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
                                                     </div><!-- Field -->
                                                 </div><!-- column -->
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label>Cost Price (₹)</label>
-                                                        <input type="text" name="cost_price" ng-model='$ctrl.part.cost_price' class="form-control" placeholder="Enter Cost price" autocomplete="off">
+                                                        <input type="text" name="cost_price" ng-model='$ctrl.part.cost_price' class="form-control" placeholder="Enter Cost price" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
                                                     </div><!-- Field -->
                                                 </div><!-- column -->
                                             </div>
@@ -300,6 +300,12 @@
                                                         <label>Supplier Package Type</label>
                                                     </div>
                                                 </div>
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>Discount (%)</label>
+                                                        <input type="text" name="discount" ng-model='$ctrl.part.discount' class="form-control" placeholder="Enter Discount" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
+                                                    </div><!-- Field -->
+                                                </div><!-- column -->
                                                 <div class="col-md-3">
                                                     <div class="input-text form-group">
                                                         <label>
