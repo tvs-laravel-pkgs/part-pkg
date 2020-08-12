@@ -1,0 +1,46 @@
+<div class="content-wrap">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="page-header-inner">
+            <div class="page-header-content-left">
+                <div class="page-header-content button-block">
+                    <a href="#!/part-pkg/brand/list" type="button" class="btn-back btn-img">
+                        <img class="img-responsive" src="./public/theme/img/content/previous.svg">
+                    </a>
+                </div>
+                <div class="page-header-content title-block">
+                    <h1 class="title">{{$ctrl.action}} Brand </h1>
+                    <p class="subtitle">Master / <a href="#!/part-pkg/brand/list"> Brand </a> / {{$ctrl.action}} </p>
+                </div>
+            </div>
+        </div><!-- Page Header Inner -->
+    </div><!-- Page Header -->
+    <!-- Page Main Content -->
+    <form id="form">
+        <input type="hidden" name="id" value="{{$ctrl.brand.id}}">
+        <div class="page-main-content">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="page-form pb-60">
+                            <div class="row">
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="input-text form-group">
+                                        <label>Brand Name<span class="mandatory"> *</span></label>
+                                        <input type="text" name="name" class="form-control name" value="{{$ctrl.brand.name}}" autocomplete="off" placeholder="Enter Brand Name">
+                                        <div class="name_error"></div>
+                                    </div><!-- Field -->
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- Page Form -->
+                    <div class="page-form-footer">
+                        <a class="btn-link" href="#!/part-pkg/brand/list">Cancel</a>
+                        <button type="submit" id="submit" class="btn btn-primary">Save</button>
+                    </div><!-- Modal Footer -->
+                </div><!-- Column -->
+            </div><!-- Row -->
+        </div><!-- Container -->
+</div><!-- Page Main Content -->
+</form>
+</div><!-- Content Wrap -->
