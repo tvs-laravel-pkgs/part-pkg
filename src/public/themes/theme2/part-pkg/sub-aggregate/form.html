@@ -1,0 +1,80 @@
+<div class="content-wrap">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="page-header-inner">
+            <div class="page-header-content-left">
+                <div class="page-header-content button-block">
+                    <a href="#!/part-pkg/sub-aggregate/list" type="button" class="btn-back btn-img">
+                        <img class="img-responsive" src="./public/theme/img/content/previous.svg">
+                    </a>
+                </div>
+                <div class="page-header-content title-block">
+                    <h1 class="title">{{$ctrl.action}} Sub Aggregate </h1>
+                    <p class="subtitle">Master / <a href="#!/part-pkg/sub-aggregate/list"> Sub Aggregate </a> / {{$ctrl.action}} </p>
+                </div>
+            </div>
+        </div><!-- Page Header Inner -->
+    </div><!-- Page Header -->
+    <!-- Page Main Content -->
+    <form id="form">
+        <input type="hidden" name="id" value="{{$ctrl.sub_aggregate.id}}">
+        <div class="page-main-content">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="page-form pb-60">
+                            <div class="row">
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="input-text form-group">
+                                        <label>Sub Aggregate Code<span class="mandatory"> *</span></label>
+                                        <input type="text" name="code" value="{{$ctrl.sub_aggregate.code}}" autocomplete="off" class="form-control code" placeholder="Enter Sub Aggregate Code">
+                                        <div class="code_error"></div>
+                                    </div><!-- Field -->
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="input-text form-group">
+                                        <label>Sub Aggregate Name<span class="mandatory"> *</span></label>
+                                        <input type="text" name="name" class="form-control name" value="{{$ctrl.sub_aggregate.name}}" autocomplete="off" placeholder="Enter Sub Aggregate Name">
+                                        <div class="name_error"></div>
+                                    </div><!-- Field -->
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <label>Aggregate<span class="mandatory"> *</span></label>
+                                    <md-select class="" ng-model="$ctrl.sub_aggregate.aggregate_id" placeholder="Select any one" md-on-close="clearSearchAggregate()" data-md-container-class="selectdemoSelectHeader">
+                                        <md-select-header class="demo-select-header">
+                                            <input ng-model="searchAggregate" type="search" placeholder="Search Aggregate" class="demo-header-searchbox md-text">
+                                        </md-select-header>
+                                        <md-optgroup label="aggregate">
+                                            <md-option ng-value="aggregate.id" ng-repeat="aggregate in $ctrl.aggregate_list | filter:searchAggregate">{{aggregate.name}}</md-option>
+                                        </md-optgroup>
+                                    </md-select>
+                                    <input type="hidden" name="aggregate_id" class="aggregate_id" value="{{$ctrl.sub_aggregate.aggregate_id}}">
+                                    <div class="aggregate_id_error"></div>
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="input-text form-group">
+                                        <label>
+                                            Active Status
+                                            <sup class="mandatory">*</sup>
+                                        </label>
+                                        <div class="tab-switch">
+                                            <md-switch ng-model="$ctrl.switch_value" aria-label="Switch 1" ng-true-value="'Inactive'" ng-false-value="'Active'" class="md-warn">
+                                                {{ $ctrl.switch_value }}
+                                            </md-switch>
+                                            <input type="hidden" name="status" value="{{$ctrl.switch_value}}">
+                                        </div>
+                                    </div><!-- Form Group -->
+                                </div><!-- Column -->
+                            </div>
+                        </div>
+                    </div><!-- Page Form -->
+                    <div class="page-form-footer">
+                        <a class="btn-link" href="#!/part-pkg/sub-aggregate/list">Cancel</a>
+                        <button type="submit" id="submit" class="btn btn-primary">Save</button>
+                    </div><!-- Modal Footer -->
+                </div><!-- Column -->
+            </div><!-- Row -->
+        </div><!-- Container -->
+</div><!-- Page Main Content -->
+</form>
+</div><!-- Content Wrap -->

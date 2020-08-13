@@ -1,0 +1,75 @@
+<div class="content-wrap">
+    <table class="table" id="rack-table" style="width: 100% !important;">
+        <thead>
+            <tr>
+                <th>Action</th>
+                <th>Type</th>
+                <th>Name</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div><!-- Content Wrap -->
+<!-- Filter Modal -->
+<div class="modal fade filter" id="filter" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
+                <h5 class="modal-title" id="myModalLabel">Filter</h5>
+            </div>
+            <div class="modal-body">
+                <ul class="modal-list-item">
+                    <li class="item">
+                        <h6 class="radio-title">Date Filter</h6>
+                        <ul class="list-inner">
+                            <li class="list-item-content radio-block md-radio-block">
+                                <div class="custom-radio-select total-radio-select">
+                                    <input id="all_date" name="all_date" type="radio" ng-click="onClickAll()">
+                                    <label for="all_date">All</label>
+                                </div>
+                            </li>
+                            <li class="list-item-content radio-block md-radio-block">
+                                <div class="custom-radio-select">
+                                    <input id="today" name="today" type="radio" value="{{$ctrl.current_date}}">
+                                    <label for="today">Today</label>
+                                </div>
+                            </li>
+                            <li class="list-item-content radio-content-block md-radio-content-block">
+                                <div class="input-text form-group">
+                                    <div class="input-group date" data-provide="datepickerrange">
+                                        <div class="input-group-addon">
+                                        </div>
+                                        <input type="text" class="form-control" id="date_range" name="date_range" placeholder="Select Date" value="" />
+                                    </div> <!-- Input Group -->
+                                </div><!-- Field -->
+                            </li>
+                        </ul>
+                    </li><!-- Item -->
+                </ul>
+                <div class="modal-filter-select-wrap mt-20">
+                    <h6 class="radio-title">Status</h6>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <md-select ng-change="onChangeOutlet($ctrl.outlet_id)" class="type-sm" ng-model="$ctrl.outlet_id" placeholder="Select Outlet" data-md-container-class="selectdemoSelectHeader">
+                                <md-select-header class="demo-select-header ng-hide">
+                                    <input ng-model="searchOutlet" type="search" placeholder="Search for a Outlet" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                </md-select-header>
+                                <md-optgroup label="Outlet List">
+                                    <md-option ng-value="outlet.id" ng-repeat="outlet in $ctrl.outlet_list | filter:searchOutlet">{{outlet.name}}</md-option>
+                                </md-optgroup>
+                            </md-select>
+                            <input type="hidden" name="outlet_id" class="outlet_id">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-white shadow" ng-click="onApplyFilter()">Apply</button>
+                <button class="btn-link reset-filter" ng-click="onResetFilter();$ctrl.outlet_id ='';">Reset</button>
+            </div>
+        </div>
+    </div>
+</div><!-- Modal Content -->
