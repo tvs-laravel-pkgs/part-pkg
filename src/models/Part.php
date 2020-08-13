@@ -27,6 +27,7 @@ class Part extends BaseModel {
 		} else if ($action == 'read') {
 			$relationships = [
 				'uom',
+				'partStock',
 				'taxCode',
 				'taxCode.taxes',
 				'repair_order_parts',
@@ -138,6 +139,14 @@ class Part extends BaseModel {
 
 	public function repair_order_parts() {
 		return $this->belongsToMany('App\RepairOrder', 'repair_order_part', 'part_id', 'repair_order_id');
+	}
+
+	public function partStock() {
+		return $this->hasOne('App\PartStock', 'part_id', 'id');
+	}
+
+	public function partType() {
+		return $this->belongsTo('App\PartType', 'part_type_id');
 	}
 
 	// Static operations --------------------------------------------------------------
