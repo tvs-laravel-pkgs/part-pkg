@@ -25,6 +25,19 @@
                         <div class="page-form pb-60">
                             <div class="row">
                                 <div class="col-md-3 col-sm-6">
+                                    <label>Outlet<span class="mandatory"> *</span></label>
+                                    <ui-select ng-model="$ctrl.rack.outlet_id" theme="select2">
+                                        <ui-select-match placeholder="Select Outlet">
+                                            {{$select.selected.name || $select.selected}}
+                                        </ui-select-match>
+                                        <ui-select-choices repeat="i.id as i in $ctrl.outlet_list | propsFilter: {name: $select.search}">
+                                            <div ng-bind-html="i.name | highlight: $select.search"></div>
+                                        </ui-select-choices>
+                                    </ui-select>
+                                    <input type="hidden" class="outlet_id" id="outlet_id" name="outlet_id" value="{{$ctrl.rack.outlet_id}}">
+                                    <div class="outlet_id_error"></div>
+                                </div>
+                                <div class="col-md-3 col-sm-6">
                                     <label>Type<span class="mandatory"> *</span></label>
                                     <ui-select ng-model="$ctrl.rack.type_id" theme="select2">
                                         <ui-select-match placeholder="Select Type">

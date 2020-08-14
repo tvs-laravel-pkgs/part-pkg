@@ -86,9 +86,11 @@ class RackController extends Controller
     		$rack_details = Rack::select(
     			'racks.*',
     			DB::raw('IF(racks.deleted_at IS NULL, "Active","Inactive") as status'),
-    			'configs.name as type_name'
+    			'configs.name as type_name',
+    			'outlets.code as outlet_name'
     		)
     		->leftJoin('configs','configs.id','racks.type_id')
+    		->leftJoin('outlets','outlets.id','racks.outlet_id')
     		->where('racks.id',$request->id)
     		->first();
     	}
@@ -99,6 +101,12 @@ class RackController extends Controller
     			->where('config_type_id', 134)
     			->get()
     		)->prepend(['id' => '', 'name' => 'Select Type']);
+    	$this->data['outlet_list'] = collect(
+			Outlet::select(
+					'code as name', 'id'
+				)->where('company_id', Auth::user()->company_id)
+				->get()
+			)->prepend(['id' => '', 'name' => 'Select Outlet']);
     	return response()->json($this->data);
     }
     public function saveRack(Request $request){
@@ -106,11 +114,13 @@ class RackController extends Controller
     	try {
 			$error_messages = [
 				'type_id.required' => 'Type is Required',
+				'outlet_id.required' => 'Outlet is Required',
 				'name.required' => 'Name is Required',
 				'name.unique' => 'Name is already taken',
 			];
 			$validator = Validator::make($request->all(), [
 				'type_id' => 'required',
+				'outlet_id' => 'required',
 				'name' => [
 					'required:true',
 					'unique:racks,name,' . $request->id . ',id,type_id,' . $request->type_id,
@@ -130,7 +140,7 @@ class RackController extends Controller
 				$rack->updated_at = Carbon::now();
 			}
 			$rack->company_id = Auth::user()->company_id;
-			$rack->outlet_id = Auth::user()->working_outlet_id;
+			$rack->outlet_id = $request->outlet_id;
 			$rack->type_id = $request->type_id;
 			$rack->name = $request->name;
 			if ($request->status == 'Inactive') {

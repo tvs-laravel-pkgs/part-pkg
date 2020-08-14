@@ -592,7 +592,6 @@ app.component('partForm', {
                     decimal: true,
                 },
                 display_order: {
-                    required: true,
                     min: 0,
                     number: true,
                 },

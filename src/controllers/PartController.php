@@ -238,7 +238,6 @@ class PartController extends Controller {
 				'name.unique' => 'Name is already taken',
 				'name.min' => 'Name is Minimum 3 Charachers',
 				'name.max' => 'Name is Maximum 191 Charachers',
-				'display_order.unique' => 'Display Order is already taken',
 			];
 			$validator = Validator::make($request->all(), [
 				'code' => [
@@ -261,9 +260,6 @@ class PartController extends Controller {
 					'nullable',
 					'exists:uoms,id',
 				],
-				'display_order' => [
-					'unique:parts,display_order,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
-				],
 				'mrp' => [
 					'required:true',
 					'numeric',
@@ -272,7 +268,7 @@ class PartController extends Controller {
 			if ($validator->fails()) {
 				return response()->json(['success' => false, 'errors' => $validator->errors()->all()]);
 			}
-
+			// dd($request->all());
 			DB::beginTransaction();
 			if (!$request->id) {
 				$part = new Part;

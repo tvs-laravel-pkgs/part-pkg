@@ -162,6 +162,7 @@ app.component('rackForm', {
             self.action = response.data.action;
             self.rack = response.data.rack_details;
             self.type_list = response.data.type_list;
+            self.outlet_list = response.data.outlet_list;
             if (self.action == 'Edit') {
                 if (self.rack.deleted_at) {
                     self.switch_value = 'Inactive';
@@ -181,6 +182,8 @@ app.component('rackForm', {
                     error.appendTo($('.name_error'));
                 } else if (element.hasClass("type_id")) {
                     error.appendTo($('.type_id_error'));
+                } else if (element.hasClass("outlet_id")) {
+                    error.appendTo($('.outlet_id_error'));
                 } else {
                     error.insertAfter(element)
                 }
@@ -191,6 +194,9 @@ app.component('rackForm', {
                     required: true,
                 },
                 'type_id ': {
+                    required: true,
+                },
+                'outlet_id ': {
                     required: true,
                 },
             },
