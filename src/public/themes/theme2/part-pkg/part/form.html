@@ -97,15 +97,16 @@
                                                                     </div>
                                                                 </div>
                                                                 <div class="row custom-row">
-                                                                    <div class="col-md-3">
+                                                                    <!--<div class="col-md-3">
                                                                         <div class="input-text form-group">
                                                                             <label>
                                                                                 Rate
                                                                                 <sup class="mandatory">*</sup>
                                                                             </label>
                                                                             <input type="text" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" class="form-control required" ng-model="$ctrl.part.rate" name="rate" placeholder="Enter Rate" />
-                                                                        </div><!-- Feild -->
-                                                                    </div><!-- Column -->
+                                                                        </div>
+                                                                    </div>-->
+                                                                    <!-- Column -->
                                                                     <div class="col-md-3">
                                                                         <div class="form-group">
                                                                             <label>Aggregate</label>
@@ -149,8 +150,6 @@
                                                                             <!--<input type="text" name="variant" ng-model='$ctrl.part.variant' class="form-control" placeholder="Enter Variant" autocomplete="off">-->
                                                                         </div>
                                                                     </div>
-                                                                </div>
-                                                                <div class="row custom-row">
                                                                     <div class="col-md-3">
                                                                         <div class="form-group">
                                                                             <label>Brand</label>
@@ -166,6 +165,8 @@
                                                                             <!--<input type="text" name="brand" ng-model='$ctrl.part.brand' class="form-control" placeholder="Enter Brand" autocomplete="off">-->
                                                                         </div>
                                                                     </div>
+                                                                </div>
+                                                                <div class="row custom-row">
                                                                     <div class="col-md-3">
                                                                         <div class="form-group">
                                                                             <label>Component</label>
@@ -192,14 +193,14 @@
                                                                             <input type="text" name="min_sale_order_qty" ng-model='$ctrl.part.min_sale_order_qty' class="form-control" placeholder="Enter Minimum Sale Order Quantity" autocomplete="off">
                                                                         </div>
                                                                     </div>
-                                                                </div>
-                                                                <div class="row custom-row">
                                                                     <div class="col-md-3">
                                                                         <div class="form-group">
                                                                             <lable>Maximum Sale Order Quantity</lable>
                                                                             <input type="text" name="max_sale_order_qty" ng-model='$ctrl.part.max_sale_order_qty' class="form-control" placeholder="Enter Maximum Sale Order Quantity" autocomplete="off">
                                                                         </div>
                                                                     </div>
+                                                                </div>
+                                                                <div class="row custom-row">
                                                                     <div class="col-md-3">
                                                                         <div class="form-group">
                                                                             <lable>Pack Size</lable>
@@ -217,14 +218,14 @@
                                                                             <input type="text" name="height" ng-model='$ctrl.part.height' class="form-control" placeholder="Enter height" autocomplete="off">
                                                                         </div>
                                                                     </div>
-                                                                </div>
-                                                                <div class="row custom-row">
                                                                     <div class="col-md-3">
                                                                         <div class="form-group">
                                                                             <lable>Width</lable>
                                                                             <input type="text" name="width" ng-model='$ctrl.part.width' class="form-control" placeholder="Enter width" autocomplete="off">
                                                                         </div>
                                                                     </div>
+                                                                </div>
+                                                                <div class="row custom-row">
                                                                     <div class="col-md-3">
                                                                         <div class="form-group">
                                                                             <lable>Weight</lable>
@@ -248,14 +249,14 @@
                                                                             <input type="text" name="item_name_in_local_lang" ng-model='$ctrl.part.item_name_in_local_lang' class="form-control" placeholder="Enter Item Name(Local Language)" autocomplete="off">
                                                                         </div>
                                                                     </div>
-                                                                </div>
-                                                                <div class="row custom-row">
                                                                     <div class="col-md-3">
                                                                         <div class="form-group">
                                                                             <lable>Product Video link</lable>
                                                                             <input type="text" name="product_video_link" ng-model='$ctrl.part.product_video_link' class="form-control" placeholder="Enter Video Link" autocomplete="off">
                                                                         </div>
                                                                     </div>
+                                                                </div>
+                                                                <div class="row custom-row">
                                                                     <div class="col-md-3">
                                                                         <div class="form-group">
                                                                             <label>MRP (₹)<span class="mandatory">*</span></label>
@@ -274,13 +275,13 @@
                                                                             <input type="text" name="cost_price" ng-model='$ctrl.part.cost_price' class="form-control" placeholder="Enter Cost price" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
                                                                         </div><!-- Field -->
                                                                     </div><!-- column -->
-                                                                </div>
-                                                                <div class="row custom-row">
                                                                     <div class="col-md-3">
                                                                         <div class="form-group">
                                                                             <label>Pack size group</label>
                                                                         </div><!-- Field -->
                                                                     </div><!-- column -->
+                                                                </div>
+                                                                <div class="row custom-row">
                                                                     <div class="col-md-3">
                                                                         <div class="form-group">
                                                                             <label>Product Group</label>
@@ -297,13 +298,13 @@
                                                                             <label>Line Code / Item Group</label>
                                                                         </div>
                                                                     </div>
-                                                                </div>
-                                                                <div class="row custom-row">
                                                                     <div class="col-md-3">
                                                                         <div class="form-group">
                                                                             <label>Supplier Package Type</label>
                                                                         </div>
                                                                     </div>
+                                                                </div>
+                                                                <div class="row custom-row">
                                                                     <div class="col-md-3">
                                                                         <div class="form-group">
                                                                             <label>Discount (%)</label>
