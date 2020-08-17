@@ -9,7 +9,6 @@ use Abs\PartPkg\PartUpsell;
 use Abs\PartPkg\PartVehicleDetail;
 use App\VehicleMake;
 use App\VehicleModel;
-use Abs\GigoPkg\PartStock;
 use App\Uom;
 use App\Config;
 use Abs\PartPkg\Aggregate;
@@ -36,12 +35,11 @@ class PartController extends Controller {
 				'parts.id',
 				'parts.name',
 				'parts.code',
-				'part_stocks.mrp',
+				'parts.mrp',
 				'uoms.code as uom',
 				'tax_codes.code as tax_code',
 				DB::raw('IF(parts.deleted_at IS NULL, "Active","Inactive") as status'),
 			])
-			->leftjoin('part_stocks', 'part_stocks.part_id', 'parts.id')
 			->leftjoin('uoms', 'uoms.id', 'parts.uom_id')
 			->leftjoin('tax_codes', 'tax_codes.id', 'parts.tax_code_id')
 			->where('parts.company_id', Auth::user()->company_id)
@@ -141,11 +139,9 @@ class PartController extends Controller {
 		} else {
 			$part = Part::select(
 				'parts.*',
-				'part_stocks.mrp',
 				'sub_aggregates.aggregate_id as aggregate_id',
 				DB::raw('COALESCE(DATE_FORMAT(item_available_date,"%d-%m-%Y"), "--") as item_available_date')
-			)->leftJoin('part_stocks','part_stocks.part_id','parts.id')
-			->leftJoin('sub_aggregates','sub_aggregates.id','parts.sub_aggregate_id')
+			)->leftJoin('sub_aggregates','sub_aggregates.id','parts.sub_aggregate_id')
 			->withTrashed()
 			->find($id);
 			$action = 'Edit';
@@ -157,11 +153,10 @@ class PartController extends Controller {
 				'parts.id',
 				'parts.code',
 				'parts.name',
-				DB::raw('IFNULL(part_stocks.mrp,0) as mrp'),
+				DB::raw('IFNULL(parts.mrp,0) as mrp'),
 				'parts.cost_price',
 				'parts.list_price'
 			)
-				->leftJoin('part_stocks','part_stocks.part_id','parts.id')
 				->leftjoin('part_alternate', 'parts.id', 'part_alternate.alternate_part_id')
 				->where('part_alternate.part_id', $id)
 				->get();
@@ -169,11 +164,10 @@ class PartController extends Controller {
 				'parts.id',
 				'parts.code',
 				'parts.name',
-				DB::raw('IFNULL(part_stocks.mrp,0) as mrp'),
+				DB::raw('IFNULL(parts.mrp,0) as mrp'),
 				'parts.cost_price',
 				'parts.list_price'
 			)
-				->leftJoin('part_stocks','part_stocks.part_id','parts.id')
 				->leftjoin('part_upsell', 'parts.id', 'part_upsell.upsell_part_id')
 				->where('part_upsell.part_id', $id)
 				->get();
@@ -309,7 +303,7 @@ class PartController extends Controller {
 			$part->item_available_date = isset($request->item_available_date) ? date('Y-m-d',strtotime($request->item_available_date)) : null;
 			$part->item_name_in_local_lang = $request->item_name_in_local_lang;
 			$part->product_video_link = $request->product_video_link;
-			// $part->mrp = $request->mrp;
+			$part->mrp = $request->mrp;
 			$part->list_price = $request->list_price;
 			$part->cost_price = $request->cost_price;
 			$part->discount = $request->discount;
@@ -324,20 +318,6 @@ class PartController extends Controller {
 
 			$part->save();
 
-			$part_stock = PartStock::where('part_id',$part->id)->first();
-			if(!$part_stock){
-				$part_stock = new PartStock;
-				$part_stock->created_by_id = Auth::user()->id;
-			}else{
-				$part_stock->updated_by_id	 = Auth::user()->id;
-			}
-			$part_stock->company_id = Auth::user()->company_id;
-			$part_stock->outlet_id = Auth::user()->working_outlet_id;
-			$part_stock->part_id = $part->id;
-			$part_stock->stock = 0;
-			$part_stock->mrp = $request->mrp;
-			$part_stock->cost_price = $request->cost_price;
-			$part_stock->save();
 			//Vehicle Part Store
 			if(isset($request->vehicle_make_id) && count($request->vehicle_make_id) > 0){
 				$delete_vehicle_details = PartVehicleDetail::where('part_id', $part->id)
@@ -542,11 +522,10 @@ class PartController extends Controller {
 				'parts.id', 
 				'parts.code',
 				'parts.name',
-				DB::raw('IFNULL(part_stocks.mrp,0) as mrp'),
+				DB::raw('IFNULL(parts.mrp,0) as mrp'),
 				'parts.cost_price',
 				'parts.list_price'
 			)
-			->leftJoin('part_stocks','part_stocks.part_id','parts.id')
 			->where('parts.id', $request->add_part_id)
 			->first();
 
