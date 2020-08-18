@@ -62,7 +62,7 @@ app.component('partList', {
                 { data: 'name', name: 'parts.name' },
                 { data: 'uom', name: 'uoms.code' },
                 { data: 'tax_code', name: 'tax_codes.code' },
-                { data: 'mrp', name: 'part_stocks.mrp' },
+                { data: 'mrp', name: 'parts.mrp' },
                 { data: 'status', name: '' },
 
             ],
