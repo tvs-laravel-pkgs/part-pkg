@@ -70,26 +70,26 @@ class Part extends BaseModel {
 				],
 			],
 		],
-		'Rate' => [
-			'table_column_name' => 'rate',
-			'rules' => [
-				'required' => [
-				],
-				'unsigned_decimal' => [
-					'size' => '12,2',
-				],
-			],
-		],
-		'MRP' => [
-			'table_column_name' => 'mrp',
-			'rules' => [
-				'required' => [
-				],
-				'unsigned_decimal' => [
-					'size' => '12,2',
-				],
-			],
-		],
+		//'Rate' => [
+		//	'table_column_name' => 'rate',
+		//	'rules' => [
+		//		'required' => [
+		//		],
+		//		'unsigned_decimal' => [
+		//			'size' => '12,2',
+		//		],
+		//	],
+		//],
+		//'MRP' => [
+		//	'table_column_name' => 'mrp',
+		//	'rules' => [
+		//		'required' => [
+		//		],
+		//		'unsigned_decimal' => [
+		//			'size' => '12,2',
+		//		],
+		//	],
+		//],
 		'Tax Code' => [
 			'table_column_name' => 'tax_code_id',
 			'rules' => [
