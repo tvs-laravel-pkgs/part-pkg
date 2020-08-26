@@ -5,6 +5,7 @@ namespace Abs\PartPkg;
 use Abs\HelperPkg\Traits\SeederTrait;
 use App\BaseModel;
 use App\Company;
+use Auth;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Part extends BaseModel {
@@ -231,6 +232,26 @@ class Part extends BaseModel {
 			'name',
 		])
 				->orderBy('name')
+				->get());
+		if ($add_default) {
+			$list->prepend(['id' => '', 'name' => $default_text]);
+		}
+		return $list;
+	}
+
+	public static function getListWithStock($params = [], $add_default = true, $default_text = 'Select Part') {
+		$list = Collect(Self::select([
+			'parts.id',
+			'parts.name',
+			'parts.code',
+			'part_stocks.stock',
+			'part_stocks.mrp',
+		])
+				->leftJoin('part_stocks', function ($join) {
+					$join->on('part_stocks.part_id', 'parts.id')
+						->where('outlet_id', Auth::user()->employee->outlet_id);
+				})
+				->orderBy('parts.name')
 				->get());
 		if ($add_default) {
 			$list->prepend(['id' => '', 'name' => $default_text]);
