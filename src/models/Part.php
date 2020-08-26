@@ -29,6 +29,7 @@ class Part extends BaseModel {
 			$relationships = [
 				'uom',
 				'partStock',
+				'jobOrderParts',
 				'taxCode',
 				'taxCode.taxes',
 				'repair_order_parts',
@@ -144,6 +145,10 @@ class Part extends BaseModel {
 
 	public function partStock() {
 		return $this->hasOne('App\PartStock', 'part_id', 'id');
+	}
+
+	public function jobOrderParts() {
+		return $this->hasMany('App\JobOrderPart', 'part_id');
 	}
 
 	public function partType() {
