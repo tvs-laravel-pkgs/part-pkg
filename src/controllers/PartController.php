@@ -4,6 +4,7 @@ namespace Abs\PartPkg;
 use Abs\GigoPkg\TaxCode;
 use App\Http\Controllers\Controller;
 use App\Part;
+use App\Attachment;
 use Abs\PartPkg\PartAlternate;
 use Abs\PartPkg\PartUpsell;
 use Abs\PartPkg\PartVehicleDetail;
@@ -120,7 +121,8 @@ class PartController extends Controller {
 		$this->data['vehicle_model_list'] = new VehicleModel;
 		$this->data['rack_type_list'] = collect(Config::where('config_type_id', 134)->select('name', 'id')->groupBy('name')->get())->prepend(['id' => '', 'name' => 'Select Rack']);
 		$this->data['rack_list'] = new Rack;
-		
+		$count_attachments = 0;
+
 		if (!$id) {
 			$part = new Part;
 			$action = 'Add';
@@ -201,12 +203,30 @@ class PartController extends Controller {
 				->get();
 			//ADDED BY KARTHICK T ON 30-07-2020
 
+			//Added By Karthick T on 04-09-2020
+			$this->data['attachments'] = $attachments = Attachment::select(
+				'attachments.id',
+				'attachments.name',
+				'attachments.entity_id',
+				'attachments.attachment_of_id',
+				'attachments.attachment_type_id',
+				'users.name as attached_by'
+			)
+				->leftjoin('users', 'users.id', 'attachments.created_by')
+				->where('attachments.attachment_of_id', 7229) // Parts Image
+				->where('attachments.entity_id', '=', $id)
+				->get();
+			$this->data['view'] = 'public/parts/attachments/'.$id;
+			$count_attachments = count($attachments);
+			//Added By Karthick T on 04-09-2020
+
 		}
 
 		//UPDATED BY KARTHICK T ON 15-07-2020
 		$this->data['success'] = true;
 		$this->data['part'] = $part;
 		$this->data['action'] = $action;
+		$this->data['count_attachments'] = $count_attachments;
 		$this->data['extras'] = [
 			'uom_list' => Uom::getList(),
 			'tax_code_list' => TaxCode::getList(),
@@ -308,6 +328,7 @@ class PartController extends Controller {
 			$part->cost_price = $request->cost_price;
 			$part->discount = $request->discount;
 			$part->display_order = $request->display_order;
+			$part->description = $request->description;
 			if ($request->status == 'Inactive') {
 				$part->deleted_at = Carbon::now();
 				$part->deleted_by_id = Auth::user()->id;
@@ -381,6 +402,30 @@ class PartController extends Controller {
 				}
 			}
 			//ADDED BY KARTHICK T ON 30-07-2020
+
+			//ADDED BY KARTHICK T ON 04-09-2020
+			if(isset($request->images) && count($request->images) > 0){
+				foreach ($request->images as $key => $file_copy) {
+					if ($file_copy != null) {
+						$entity_id = $part->id;
+						$destination = 'public/parts/attachments/'.$entity_id;
+						$count_attachment = Attachment::get()->count() + 1;
+						$extension = '.' . $file_copy->getClientOriginalExtension();
+						$attachmentname = 'part_image_' . $count_attachment . '_' . date("Y_m_d") . "_" . date("h_i_s") . $extension;
+						$file = $file_copy;
+						$attachment = new Attachment;
+						$path = $file->storeAs($destination, $attachmentname);
+						$attachment->attachment_of_id = 7229;	// Part Image
+						$attachment->attachment_type_id = 7229; 	// Part Image
+						$attachment->entity_id = $entity_id;
+						$attachment->name = $attachmentname;
+						$attachment->path = $path;
+						$attachment->created_by = Auth::user()->id;
+						$attachment->save();
+					}
+				}
+			}
+			//ADDED BY KARTHICK T ON 04-09-2020
 
 			DB::commit();
 			if (!($request->id)) {

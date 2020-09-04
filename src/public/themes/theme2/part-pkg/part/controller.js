@@ -213,6 +213,11 @@ app.component('partForm', {
             self.component_list = response.data.component_list;
             self.rack_list = response.data.rack_list;
             self.rack_type_list = response.data.rack_type_list;
+            self.count_attachments = response.data.count_attachments;
+            if (self.count_attachments > 0) {
+                self.attachments = response.data.attachments;
+                self.view = response.data.view;
+            }
 
             $('#alternate_part_ids').val(self.alt_parts_ids.join());
             $('#upsell_part_ids').val(self.upsell_parts_ids.join());
@@ -232,6 +237,9 @@ app.component('partForm', {
                 self.switch_value = 'Active';
             }
         });
+
+        /* Image Uploadify Funtion */
+        $('.image_uploadify').imageuploadify();
 
         $('.item_available_date').datepicker({
             dateFormat: 'dd-mm-yy',

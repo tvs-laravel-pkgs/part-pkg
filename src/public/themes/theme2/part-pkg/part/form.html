@@ -26,6 +26,7 @@
                             <li><a class="btn-pills" data-target="#alternate-parts" role="tab" data-toggle="tab" aria-expanded="true">Alternate Parts</a></li>
                             <li><a class="btn-pills" data-target="#upsell-parts" data-toggle="tab" role="tab" aria-expanded="true">Upsell Parts</a></li>
                             <li><a class="btn-pills" data-target="#rack-parts" data-toggle="tab" role="tab" aria-expanded="true">Rack Parts</a></li>
+                            <li ng-if="$ctrl.count_attachments > 0"><a class="btn-pills" data-target="#attachment-parts" data-toggle="tab" role="tab" aria-expanded="true">Parts Image</a></li>
                         </ul>
                     </div><!-- Filters -->
                 </div><!-- Tab Page Wrap Header -->
@@ -309,6 +310,18 @@
                                                                         <div class="form-group">
                                                                             <label>Discount (%)</label>
                                                                             <input type="text" name="discount" ng-model='$ctrl.part.discount' class="form-control" placeholder="Enter Discount" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
+                                                                        </div><!-- Field -->
+                                                                    </div><!-- column -->
+                                                                    <div class="col-md-3">
+                                                                        <div class="form-group">
+                                                                            <label>Image</label>
+                                                                            <input type="file" class="image_uploadify" accept="image/*,application/pdf" name="images[]" multiple>
+                                                                        </div><!-- Field -->
+                                                                    </div><!-- column -->
+                                                                    <div class="col-md-3">
+                                                                        <div class="form-group">
+                                                                            <label>Product Description</label>
+                                                                            <input type="text" name="description" ng-model='$ctrl.part.description' class="form-control" placeholder="Enter Product Description" autocomplete="off">
                                                                         </div><!-- Field -->
                                                                     </div><!-- column -->
                                                                     <div class="col-md-3">
@@ -653,12 +666,53 @@
                                                                 <div class="row">
                                                                     <div class="col-md-12">
                                                                         <a class="btn btn-primary btn-prev">Previous</a>
-                                                                        <button type="submit" class="btn btn-bordered submit">Submit</button>
+                                                                        <a ng-show="$ctrl.count_attachments > 0" class="btn btn-bordered btn-nxt">Next</a>
+                                                                        <button type="submit" ng-if="$ctrl.count_attachments == 0" class="btn btn-bordered submit">Submit</button>
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
+                                                </div><!-- Tab Pane -->
+                                                <div class="tab-pane fade" id="attachment-parts" data-animation="fadeInUp" data-animation-delay="300">
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="table-responsive table-scroll">
+                                                                <table id="attachment_list" class="table">
+                                                                    <thead class="text-primary">
+                                                                        <tr>
+                                                                            <th>S. No</th>
+                                                                            <th>File Name</th>
+                                                                            <th>Attached By</th>
+                                                                            <th>Action</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        <tr ng-repeat="(key,attachment) in $ctrl.attachments">
+                                                                            <td>{{key + 1}}</td>
+                                                                            <td>{{attachment.name}}</td>
+                                                                            <td>{{attachment.attached_by ? attachment.attached_by : '--'}}</td>
+                                                                            <td class="action">
+                                                                                <a href="storage/app/{{$ctrl.view}}/{{attachment.name}}" target="new">
+                                                                                    <img class="img-responsive" src="./public/theme/img/table/cndn/view.svg">
+                                                                                </a>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div><!-- Table Responsive -->
+                                                        </div><!-- Column -->
+                                                        <div class="col-md-12">
+                                                            <div class="tab-pane-footer">
+                                                                <div class="row">
+                                                                    <div class="col-md-12">
+                                                                        <a class="btn btn-primary btn-prev">Previous</a>
+                                                                        <button type="submit" ng-if="$ctrl.count_attachments > 0" class="btn btn-bordered submit">Submit</button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div><!-- Row -->
                                                 </div><!-- Tab Pane -->
                                             </div><!-- Tab Content -->
                                         </div>
@@ -672,6 +726,7 @@
         </div><!-- Column -->
     </div><!-- Row -->
 </div><!-- Content Wrap -->
+<script src="./public/theme/js/imageuploadify-jva.min.js"></script>
 <!-- Modal -->
 <div class="modal fade alert-modal failure" id="vehicle-mapping-delete-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
