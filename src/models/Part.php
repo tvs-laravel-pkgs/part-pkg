@@ -3,6 +3,7 @@
 namespace Abs\PartPkg;
 
 use Abs\HelperPkg\Traits\SeederTrait;
+use Abs\TaxPkg\TaxCode;
 use App\BaseModel;
 use App\Company;
 use Auth;
@@ -14,7 +15,7 @@ class Part extends BaseModel {
 	protected $table = 'parts';
 	public $timestamps = true;
 	protected $fillable =
-		["id", "company_id", "code", "name", "uom_id", "rate", "tax_code_id", "mrp"]
+		["company_id", "code", "name", "uom_id", "rate", "tax_code_id", "mrp"]
 	;
 
 	public static function relationships($action = 'index') {
@@ -172,6 +173,7 @@ class Part extends BaseModel {
 
 	public static function saveFromExcelArray($record_data) {
 		$errors = [];
+
 		$company = Company::where('code', $record_data['Company Code'])->first();
 		if (!$company) {
 			return [
@@ -194,11 +196,11 @@ class Part extends BaseModel {
 			$created_by_id = $record_data['created_by_id'];
 		}
 
-		if (empty($record_data['Rate'])) {
-			$errors[] = 'Rate is empty';
-		} else {
-			$rate = $record_data['Rate'];
-		}
+		// if (empty($record_data['Rate'])) {
+		// 	$errors[] = 'Rate is empty';
+		// } else {
+		// 	$rate = $record_data['Rate'];
+		// }
 
 		if (empty($record_data['MRP'])) {
 			$errors[] = 'MRP is empty';
@@ -215,7 +217,8 @@ class Part extends BaseModel {
 
 		$record = Self::firstOrNew([
 			'company_id' => $company->id,
-			'code' => $record_data['Code'],
+			'code' => preg_replace('/\s+/', ' ', $record_data['Code']),
+			'name' => $record_data['Name'],
 		]);
 
 		$result = Self::validateAndFillExcelColumns($record_data, Static::$excelColumnRules, $record);
@@ -223,8 +226,16 @@ class Part extends BaseModel {
 			return $result;
 		}
 		$record->mrp = $mrp;
-		$record->rate = $rate;
+		// $record->rate = $rate;
 		$record->created_by_id = $created_by_id;
+
+		//Check Tax code
+		$tax_code = TaxCode::where('code', $record_data['Tax Code'])->first();
+
+		if ($tax_code) {
+			$record->tax_code_id = $tax_code->id;
+		}
+
 		$record->save();
 		return [
 			'success' => true,
