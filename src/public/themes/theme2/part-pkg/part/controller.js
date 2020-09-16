@@ -219,6 +219,9 @@ app.component('partForm', {
                 self.view = response.data.view;
             }
 
+            //For Discount Group by karthick t on 16-09-2020
+            self.discount_group_list = response.data.discount_group_list;
+
             $('#alternate_part_ids').val(self.alt_parts_ids.join());
             $('#upsell_part_ids').val(self.upsell_parts_ids.join());
 

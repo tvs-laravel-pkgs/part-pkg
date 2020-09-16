@@ -231,6 +231,11 @@ class PartController extends Controller {
 			'uom_list' => Uom::getList(),
 			'tax_code_list' => TaxCode::getList(),
 		];
+
+		//For Discount Group by karthick t on 16-09-2020
+		$this->data['discount_group_list'] = collect(DB::table('discount_groups')->select('name', 'id')->where('type_id',2050)->get())->prepend(['id' => '', 'name' => 'Select Discount Group']);
+		//For Discount Group by karthick t on 16-09-2020
+
 		return response()->json($this->data);
 	}
 
@@ -329,6 +334,11 @@ class PartController extends Controller {
 			$part->discount = $request->discount;
 			$part->display_order = $request->display_order;
 			$part->description = $request->description;
+			
+			//For Discount Group by karthick t on 16-09-2020
+			$part->discount_group_id = (isset($request->discount_group_id) && $request->discount_group_id) ? $request->discount_group_id : null;
+			//For Discount Group by karthick t on 16-09-2020
+			
 			if ($request->status == 'Inactive') {
 				$part->deleted_at = Carbon::now();
 				$part->deleted_by_id = Auth::user()->id;

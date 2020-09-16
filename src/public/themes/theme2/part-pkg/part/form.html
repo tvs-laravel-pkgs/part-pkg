@@ -325,6 +325,22 @@
                                                                         </div><!-- Field -->
                                                                     </div><!-- column -->
                                                                     <div class="col-md-3">
+                                                                        <div class="form-group">
+                                                                            <label>Discount Group (%)</label>
+                                                                            <ui-select ng-model="$ctrl.part.discount_group_id" theme="select2">
+                                                                                <ui-select-match placeholder="Select Discount Group">
+                                                                                    {{$select.selected.name || $select.selected}}
+                                                                                </ui-select-match>
+                                                                                <ui-select-choices repeat="i.id as i in $ctrl.discount_group_list | propsFilter: {name: $select.search}">
+                                                                                    <div ng-bind-html="i.name | highlight: $select.search"></div>
+                                                                                </ui-select-choices>
+                                                                            </ui-select>
+                                                                            <input type="hidden" id="discount_group_id" name="discount_group_id" value="{{$ctrl.part.discount_group_id}}">
+                                                                        </div>
+                                                                    </div><!-- column -->
+                                                                </div>
+                                                                <div class="row custom-row">
+                                                                    <div class="col-md-3">
                                                                         <div class="input-text form-group">
                                                                             <label>
                                                                                 Active Status
