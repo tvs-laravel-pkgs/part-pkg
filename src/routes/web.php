@@ -51,4 +51,20 @@ Route::group(['namespace' => 'Abs\PartPkg','middleware' => ['web', 'auth'], 'pre
 		Route::POST('/rack-details/save', 'RackController@saveRack')->name('saveRack');
 		//By karthick t on 12-08-2020
 
+		//Added by karthick t on 17-08-2020
+		//For discount group
+		Route::get('/discount-group-filter-details/get', 'DiscountGroupController@getFilterData')->name('getDiscountGrpFilterData');
+		Route::get('/discount-group-details/list', 'DiscountGroupController@getList')->name('getDiscountGroupList');
+		Route::get('/discount-group-form-details/get', 'DiscountGroupController@getFormData')->name('getDiscountGroupFormDetails');
+		Route::POST('/discount-group-form-details/save', 'DiscountGroupController@saveData')->name('saveDiscountGroup');
+		Route::get('/discount-group-form-details/delete', 'DiscountGroupController@deleteData')->name('deleteDiscountGroup');
+
+		//For price discount
+		Route::get('/price-discount-filter-details/get', 'PriceDiscountController@getFilterData')->name('getPriceDiscountFilterData');
+		Route::get('/price-discount-details/list', 'PriceDiscountController@getList')->name('getPriceDiscountList');
+		Route::get('/price-discount-form-details/get', 'PriceDiscountController@getFormData')->name('getPriceDiscountFormDetails');
+		Route::POST('/price-discount-form-details/save', 'PriceDiscountController@saveData')->name('savePriceDiscount');
+		Route::get('/price-discount-form-details/delete', 'PriceDiscountController@deleteData')->name('deletePriceDiscount');
+		//Added by karthick t on 17-08-2020
+
 });

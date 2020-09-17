@@ -104,8 +104,30 @@
 	    when('/part-pkg/rack/view/:id', {
 	        template: '<rack-view></rack-view>',
 	        title: 'Rack View',
-	    });
+	    }).
 	    //By karthick t on 12-08-2020
+
+
+	    //Added by karthick t on 17-09-2020
+	    //For Discount Group
+	    when('/part-pkg/discount-group/list', {
+	    	template: '<discount-group-list></discount-group-list>',
+	        title: 'Discount Group List',
+	    }).
+	    when('/part-pkg/discount-group/:type/:id?', {
+	    	template: '<discount-group-form></discount-group-form>',
+	        title: 'Discount Group Form',
+	    }).
+	    //For Price Discount
+	    when('/part-pkg/price-discount/list', {
+	    	template: '<price-discount-list></price-discount-list>',
+	        title: 'Price Discount List',
+	    }).
+	    when('/part-pkg/price-discount/:type/:id?', {
+	    	template: '<price-discount-form></price-discount-form>',
+	        title: 'Price Discount Form',
+	    });
+	    //Added by karthick t on 17-09-2020
 	}]);
 
 	//Parts
@@ -144,8 +166,17 @@
     var rack_list_template_url = '{{asset($part_pkg_prefix.'/public/themes/'.$theme.'/part-pkg/rack/list.html')}}';
     var rack_form_template_url = '{{asset($part_pkg_prefix.'/public/themes/'.$theme.'/part-pkg/rack/form.html')}}';
     var rack_view_template_url = '{{asset($part_pkg_prefix.'/public/themes/'.$theme.'/part-pkg/rack/view.html')}}';
-    
     //By karthick t on 12-08-2020
+
+    //Added by karthick t on 17-09-2020
+    //Discount Group
+    var discount_group_list_template_url = '{{asset($part_pkg_prefix.'/public/themes/'.$theme.'/part-pkg/discount-group/list.html')}}';
+    var discount_group_form_template_url = '{{asset($part_pkg_prefix.'/public/themes/'.$theme.'/part-pkg/discount-group/form.html')}}';
+    //Price Discount
+    var price_discount_list_template_url = '{{asset($part_pkg_prefix.'/public/themes/'.$theme.'/part-pkg/price-discount/list.html')}}';
+    var price_discount_form_template_url = '{{asset($part_pkg_prefix.'/public/themes/'.$theme.'/part-pkg/price-discount/form.html')}}';
+    //Added by karthick t on 17-09-2020
+    
 </script>
 <!-- <script type='text/javascript' src='{{asset($part_pkg_prefix.'/public/themes/'.$theme.'/part-pkg/part/controller.js')}}'></script> -->
 

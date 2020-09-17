@@ -1,0 +1,109 @@
+<div class="content-wrap">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="page-header-inner">
+            <div class="page-header-content-left">
+                <div class="page-header-content button-block">
+                    <a href="#!/part-pkg/price-discount/list" type="button" class="btn-back btn-img">
+                        <img class="img-responsive" src="./public/theme/img/content/previous.svg">
+                    </a>
+                </div>
+                <div class="page-header-content title-block">
+                    <h1 class="title">{{$ctrl.action}} Price Discount </h1>
+                    <p class="subtitle">Master / <a href="#!/part-pkg/price-discount/list"> Price Discount </a> / {{$ctrl.action}} </p>
+                </div>
+            </div>
+        </div><!-- Page Header Inner -->
+    </div><!-- Page Header -->
+    <!-- Page Main Content -->
+    <form id="form">
+        <input type="hidden" name="id" value="{{$ctrl.price_discount.id}}">
+        <div class="page-main-content">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="page-form pb-60">
+                            <div class="row">
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="input-text form-group">
+                                        <label>Region<span class="mandatory" ng-hide="$ctrl.type == 'view'"> *</span></label>
+                                        <span ng-show="$ctrl.type == 'view'">{{$ctrl.price_discount.region_name ? $ctrl.price_discount.region_name : '--'}}</span>
+                                        <md-select ng-hide="$ctrl.type == 'view'" class="" ng-model="$ctrl.price_discount.region_id" placeholder="Select any one" md-on-close="clearSearchRegion()" data-md-container-class="selectdemoSelectHeader">
+                                            <md-select-header class="demo-select-header">
+                                                <input ng-model="searchRegion" type="search" placeholder="Search Type" class="demo-header-searchbox md-text">
+                                            </md-select-header>
+                                            <md-optgroup label="type">
+                                                <md-option ng-value="region_list.id" ng-repeat="region_list in $ctrl.region_lists | filter:searchRegion">{{region_list.name}}</md-option>
+                                            </md-optgroup>
+                                        </md-select>
+                                        <input type="hidden" name="region_id" class="region_id" value="{{$ctrl.price_discount.region_id}}">
+                                        <div class="region_id_error"></div>
+                                    </div><!-- Field -->
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="input-text form-group">
+                                        <label>Discount Group<span class="mandatory" ng-hide="$ctrl.type == 'view'"> *</span></label>
+                                        <span ng-show="$ctrl.type == 'view'">{{$ctrl.price_discount.discount_group_name ? $ctrl.price_discount.discount_group_name : '--'}}</span>
+                                        <md-select ng-hide="$ctrl.type == 'view'" class="" ng-model="$ctrl.price_discount.discount_group_id" placeholder="Select any one" md-on-close="clearSearchDiscountGrp()" data-md-container-class="selectdemoSelectHeader">
+                                            <md-select-header class="demo-select-header">
+                                                <input ng-model="searchDiscountGrp" type="search" placeholder="Search Type" class="demo-header-searchbox md-text">
+                                            </md-select-header>
+                                            <md-optgroup label="type">
+                                                <md-option ng-value="discount_grp_list.id" ng-repeat="discount_grp_list in $ctrl.discount_grp_lists | filter:searchDiscountGrp">{{discount_grp_list.name}}</md-option>
+                                            </md-optgroup>
+                                        </md-select>
+                                        <input type="hidden" name="discount_group_id" class="discount_group_id" value="{{$ctrl.price_discount.discount_group_id}}">
+                                        <div class="discount_group_id_error"></div>
+                                    </div><!-- Field -->
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="input-text form-group">
+                                        <label>Purchase Discount (%) <span class="mandatory" ng-hide="$ctrl.type == 'view'"> *</span></label>
+                                        <span ng-show="$ctrl.type == 'view'">{{$ctrl.price_discount.purchase_discount ? $ctrl.price_discount.purchase_discount : '--'}}</span>
+                                        <input ng-hide="$ctrl.type == 'view'" type="text" name="purchase_discount" class="form-control purchase_discount" value="{{$ctrl.price_discount.purchase_discount}}" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');if(parseFloat(this.value) > 100.00){this.value = this.value.slice(0,-1);}" placeholder="Enter Purchase Discount">
+                                        <div class="purchase_discount_error"></div>
+                                    </div><!-- Field -->
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="input-text form-group">
+                                        <label>Approved Discount (%) <span class="mandatory" ng-hide="$ctrl.type == 'view'"> *</span></label>
+                                        <span ng-show="$ctrl.type == 'view'">{{$ctrl.price_discount.approved_discount ? $ctrl.price_discount.approved_discount : '--'}}</span>
+                                        <input ng-hide="$ctrl.type == 'view'" type="text" name="approved_discount" class="form-control approved_discount" value="{{$ctrl.price_discount.approved_discount}}" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');if(parseFloat(this.value) > 100.00){this.value = this.value.slice(0,-1);}" placeholder="Enter Approved Discount">
+                                        <div class="approved_discount_error"></div>
+                                    </div><!-- Field -->
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="input-text form-group">
+                                        <label>Customer Discount (%) <span class="mandatory" ng-hide="$ctrl.type == 'view'"> *</span></label>
+                                        <span ng-show="$ctrl.type == 'view'">{{$ctrl.price_discount.customer_discount ? $ctrl.price_discount.customer_discount : '--'}}</span>
+                                        <input ng-hide="$ctrl.type == 'view'" type="text" name="customer_discount" class="form-control customer_discount" value="{{$ctrl.price_discount.customer_discount}}" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');if(parseFloat(this.value) > 100.00){this.value = this.value.slice(0,-1);}" placeholder="Enter Customer Discount">
+                                        <div class="customer_discount_error"></div>
+                                    </div><!-- Field -->
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="input-text form-group">
+                                        <label>
+                                            Active Status
+                                            <sup class="mandatory" ng-hide="$ctrl.type == 'view'">*</sup>
+                                        </label>
+                                        <span ng-show="$ctrl.type == 'view'">{{$ctrl.switch_value}}</span>
+                                        <div class="tab-switch" ng-hide="$ctrl.type == 'view'">
+                                            <md-switch ng-model="$ctrl.switch_value" aria-label="Switch 1" ng-true-value="'Inactive'" ng-false-value="'Active'" class="md-warn">
+                                                {{ $ctrl.switch_value }}
+                                            </md-switch>
+                                            <input type="hidden" name="status" value="{{$ctrl.switch_value}}">
+                                        </div>
+                                    </div><!-- Form Group -->
+                                </div><!-- Column -->
+                            </div>
+                        </div>
+                    </div><!-- Page Form -->
+                    <div class="page-form-footer">
+                        <a class="btn-link" href="#!/part-pkg/price-discount/list">Cancel</a>
+                        <button ng-hide="$ctrl.type == 'view'" type="submit" id="submit" class="btn btn-primary">Save</button>
+                    </div><!-- Modal Footer -->
+                </div><!-- Column -->
+            </div><!-- Row -->
+        </div><!-- Container -->
+    </form>
+</div><!-- Content Wrap -->
