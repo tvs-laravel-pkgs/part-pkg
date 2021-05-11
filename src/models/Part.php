@@ -6,6 +6,7 @@ use Abs\HelperPkg\Traits\SeederTrait;
 use Abs\TaxPkg\TaxCode;
 use App\BaseModel;
 use App\Company;
+use App\Business;
 use Auth;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -161,6 +162,7 @@ class Part extends BaseModel {
 	public static function saveFromObject($record_data) {
 		$record = [
 			'Company Code' => $record_data->company_code,
+            'Business Code' => $record_data->business_code,
 			'Code' => $record_data->code,
 			'Name' => $record_data->name,
 			'UOM Code' => $record_data->uom_code,
@@ -181,6 +183,15 @@ class Part extends BaseModel {
 				'errors' => ['Invalid Company : ' . $record_data['Company Code']],
 			];
 		}
+
+        $business = Business::where('code', $record_data['Business Code'])->first();
+        if (!$business) {
+            // return [
+            //     'success' => false,
+            //     'errors' => ['Invalid Business : ' . $record_data['Business Code']],
+            // ];
+            $business = '';
+        }
 
 		if (!isset($record_data['created_by_id'])) {
 			$admin = $company->admin();
@@ -236,6 +247,7 @@ class Part extends BaseModel {
 			$record->tax_code_id = $tax_code->id;
 		}
 
+        $record->business_id = $business ? $business->id : 16;
 		$record->save();
 		return [
 			'success' => true,
@@ -276,19 +288,32 @@ class Part extends BaseModel {
 	}
 
 	public static function searchPart($r) {
-		$key = $r->key;
-		$list = self::select(
-			'id',
-			'code',
-			'name'
-		)
-			->where(function ($q) use ($key) {
-				$q->where('name', 'like', $key . '%')
-					->orwhere('code', 'like', $key . '%')
-				;
-			})
-			->get();
-		return response()->json($list);
-	}
+        $key = $r->key;
+
+        if (isset($r->business_id)) {
+            $business_id = $r->business_id;
+        } else {
+            $business_id = 16;
+        }
+
+        $list = [];
+
+        if ($key) {
+            $list = self::select(
+                'id',
+                'code',
+                'name'
+            )
+                ->where(function ($q) use ($key) {
+                    $q->where('name', 'like', $key . '%')
+                        ->orwhere('code', 'like', $key . '%')
+                    ;
+                })
+                ->where('parts.business_id', $business_id)
+                ->get();
+        }
+
+        return response()->json($list);
+    }
 
 }
