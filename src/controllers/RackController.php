@@ -5,6 +5,7 @@ namespace Abs\PartPkg;
 use Abs\PartPkg\Rack;
 use App\Config;
 use App\Outlet;
+use App\ActivityLog;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Auth;
@@ -59,6 +60,9 @@ class RackController extends Controller
     		->groupBy('racks.id')
 			->get();
 		// dd($rack_list);
+		//Added by Rajarajan S on 26-05-2021
+		$approval_log = ActivityLog::saveActivityLog(NULL, '2000', null, 'rack list');
+		//Added by Rajarajan S on 26-05-2021
 		return datatables::of($rack_list)
 			->addColumn('status', function ($rack_list) {
 				$status = $rack_list->status == 'Active' ? 'green' : 'red';
@@ -80,7 +84,7 @@ class RackController extends Controller
     }
     public function getRackFormDetails(Request $request){
     	$action = 'Add';
-    	$rack_details = [];
+		$rack_details = [];
     	if($request->id){
     		$action = 'Edit';
     		$rack_details = Rack::select(
@@ -92,7 +96,7 @@ class RackController extends Controller
     		->leftJoin('configs','configs.id','racks.type_id')
     		->leftJoin('outlets','outlets.id','racks.outlet_id')
     		->where('racks.id',$request->id)
-    		->first();
+			->first();
     	}
     	$this->data['action'] = $action;
     	$this->data['rack_details'] = $rack_details;
@@ -134,10 +138,16 @@ class RackController extends Controller
 				$rack = new Rack;
 				$rack->created_by = Auth::user()->id;
 				$rack->created_at = Carbon::now();
+				//Added by Rajarajan S on 26-05-2021
+				$approval_log = ActivityLog::saveActivityLog(null, '2000', null, 'rack save');
+				//Added by Rajarajan S on 26-05-2021
 			} else {
 				$rack = Rack::find($request->id);
 				$rack->updated_by = Auth::user()->id;
 				$rack->updated_at = Carbon::now();
+				//Added by Rajarajan S on 26-05-2021
+				$approval_log = ActivityLog::saveActivityLog($request->id, '2000', null, 'rack update');
+				//Added by Rajarajan S on 26-05-2021
 			}
 			$rack->company_id = Auth::user()->company_id;
 			$rack->outlet_id = $request->outlet_id;

@@ -12,6 +12,7 @@ use App\VehicleMake;
 use App\VehicleModel;
 use App\Uom;
 use App\Config;
+use App\ActivityLog;
 use Abs\PartPkg\Aggregate;
 use Abs\PartPkg\SubAggregate;
 use Abs\PartPkg\PartRack;
@@ -78,7 +79,9 @@ class PartController extends Controller {
 				}
 			})
 		;
-
+		//Added by Rajarajan S on 26-05-2021	
+		$approval_log = ActivityLog::saveActivityLog(null, '119', null, 'parts list');
+		//Added by Rajarajan S on 26-05-2021
 		return Datatables::of($parts)
 		// ->rawColumns(['name', 'action','status'])
 			->addColumn('status', function ($part) {
@@ -137,7 +140,9 @@ class PartController extends Controller {
 			//ADDED BY KARTHICK T ON 30-07-2020
 			$this->data['rack_parts'] = [];
 			//ADDED BY KARTHICK T ON 30-07-2020
-
+			//Added by Rajarajan S on 26-05-2021
+			$approval_log = ActivityLog::saveActivityLog(null, '119', null, 'parts add');
+			//Added by Rajarajan S on 26-05-2021
 		} else {
 			$part = Part::select(
 				'parts.*',
@@ -219,7 +224,9 @@ class PartController extends Controller {
 			$this->data['view'] = 'public/parts/attachments/'.$id;
 			$count_attachments = count($attachments);
 			//Added By Karthick T on 04-09-2020
-
+			//Added by Rajarajan S on 26-05-2021
+			$approval_log = ActivityLog::saveActivityLog($id, '119', null, 'parts edit');	
+			//Added by Rajarajan S on 26-05-2021	
 		}
 
 		//UPDATED BY KARTHICK T ON 15-07-2020
@@ -439,11 +446,17 @@ class PartController extends Controller {
 
 			DB::commit();
 			if (!($request->id)) {
+				//ADDED BY Rajarajan S ON 24-05-2021
+				$approval_log = ActivityLog::saveActivityLog($part->id, '119', null, 'parts save');
+				//ADDED BY Rajarajan S ON 24-05-2021
 				return response()->json([
 					'success' => true,
 					'message' => 'Part Added Successfully',
 				]);
 			} else {
+				//ADDED BY Rajarajan S ON 24-05-2021
+				$approval_log = ActivityLog::saveActivityLog($part->id, '119', null, 'parts update');
+				//ADDED BY Rajarajan S ON 24-05-2021
 				return response()->json([
 					'success' => true,
 					'message' => 'Part Updated Successfully',
@@ -475,6 +488,9 @@ class PartController extends Controller {
 		try {
 			$part = Part::withTrashed()->where('id', $request->id)->forceDelete();
 			if ($part) {
+				//ADDED BY Rajarajan S ON 24-05-2021
+				$approval_log = ActivityLog::saveActivityLog($request->id, '119', null, 'parts delete');
+				//ADDED BY Rajarajan S ON 24-05-2021
 				DB::commit();
 				return response()->json(['success' => true, 'message' => 'Part Deleted Successfully']);
 			}
