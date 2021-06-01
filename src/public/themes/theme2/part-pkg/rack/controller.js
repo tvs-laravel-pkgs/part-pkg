@@ -18,6 +18,7 @@ app.component('rackList', {
             $timeout(function() {
                 var cols = [
                     { data: 'action', class: 'action', searchable: false },
+                    { data: 'code', name: 'code', searchable: true },
                     { data: 'type', name: 'type', searchable: true },
                     { data: 'name', name: 'name', searchable: true },
                     { data: 'status', name: '' },
@@ -42,7 +43,6 @@ app.component('rackList', {
                     ajax: {
                         url: laravel_routes['getRackList'],
                         data: function(d) {
-                            d.today = $('#today').val();
                             d.date_range = $('#date_range').val();
                             d.outlet = $('.outlet_id').val();
                         }
@@ -91,12 +91,6 @@ app.component('rackList', {
                     },
                     "opens": "center",
                     autoclose: true,
-                });
-
-                $('#today').change(function() {
-                    $('#all_date').prop('checked', false);
-                    $('#date_range').val('');
-                    $('#today').val(self.current_date);
                 });
 
                 $('#date_range').change(function() {

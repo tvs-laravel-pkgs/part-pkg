@@ -31,9 +31,11 @@ class RackController extends Controller
 				'racks.id',
 				'racks.name',
 				'configs.name as type',
+				'outlets.code as code',
 				DB::raw('IF(racks.deleted_at IS NULL, "Active","Inactive") as status')
 			)
-    		->leftJoin('configs','configs.id','racks.type_id')
+			->leftJoin('configs','configs.id','racks.type_id')
+			->leftJoin('outlets','outlets.id','racks.outlet_id')
 			->where(function ($query) use ($request) {
 				if (!empty($request->outlet)) {
 					$query->where('racks.outlet_id', '=', $request->outlet);
@@ -60,9 +62,6 @@ class RackController extends Controller
     		->groupBy('racks.id')
 			->get();
 		// dd($rack_list);
-		//Added by Rajarajan S on 26-05-2021
-		$approval_log = ActivityLog::saveActivityLog(NULL, '2000', null, 'rack list');
-		//Added by Rajarajan S on 26-05-2021
 		return datatables::of($rack_list)
 			->addColumn('status', function ($rack_list) {
 				$status = $rack_list->status == 'Active' ? 'green' : 'red';
