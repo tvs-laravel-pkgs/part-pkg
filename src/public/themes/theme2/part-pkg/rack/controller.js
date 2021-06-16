@@ -18,7 +18,7 @@ app.component('rackList', {
             $timeout(function() {
                 var cols = [
                     { data: 'action', class: 'action', searchable: false },
-                    { data: 'code', name: 'code', searchable: true },
+                    { data: 'outlet', name: 'outlet', searchable: true },
                     { data: 'type', name: 'type', searchable: true },
                     { data: 'name', name: 'name', searchable: true },
                     { data: 'status', name: '' },

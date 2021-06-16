@@ -31,7 +31,7 @@ class RackController extends Controller
 				'racks.id',
 				'racks.name',
 				'configs.name as type',
-				'outlets.code as code',
+				'outlets.code as outlet',
 				DB::raw('IF(racks.deleted_at IS NULL, "Active","Inactive") as status')
 			)
 			->leftJoin('configs','configs.id','racks.type_id')
