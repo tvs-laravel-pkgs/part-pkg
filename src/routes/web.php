@@ -66,5 +66,8 @@ Route::group(['namespace' => 'Abs\PartPkg','middleware' => ['web', 'auth'], 'pre
 		Route::POST('/price-discount-form-details/save', 'PriceDiscountController@saveData')->name('savePriceDiscount');
 		Route::get('/price-discount-form-details/delete', 'PriceDiscountController@deleteData')->name('deletePriceDiscount');
 		//Added by karthick t on 17-08-2020
+    //Part categories
+    Route::post('/part/category/update', 'PartController@updatePartCategoryDetail')->name('updatePartCategoryDetail');
+
 
 });

@@ -2,6 +2,7 @@
 
 namespace Abs\PartPkg;
 use Abs\GigoPkg\TaxCode;
+use Abs\PartPkg\PartItemCategory;
 use App\Http\Controllers\Controller;
 use App\Part;
 use App\Attachment;
@@ -123,6 +124,7 @@ class PartController extends Controller {
 
 		$this->data['vehicle_model_list'] = new VehicleModel;
 		$this->data['rack_type_list'] = collect(Config::where('config_type_id', 134)->select('name', 'id')->groupBy('name')->get())->prepend(['id' => '', 'name' => 'Select Rack']);
+		$this->data['category_list'] = collect(Config::where('config_type_id', 253)->select('name', 'id')->groupBy('name')->get())->prepend(['id' => '', 'name' => 'Select Category']);
 		$this->data['rack_list'] = new Rack;
 		$count_attachments = 0;
 
@@ -226,7 +228,28 @@ class PartController extends Controller {
 			//Added By Karthick T on 04-09-2020
 			//Added by Rajarajan S on 26-05-2021
 			$approval_log = ActivityLog::saveActivityLog($id, '119', null, 'parts edit');	
-			//Added by Rajarajan S on 26-05-2021	
+			//Added by Rajarajan S on 26-05-2021
+            //item category By Parthiban V on 25-06-2021
+            $item_category = PartItemCategory::select('to_category_id')->where('item_id', $id)->orderBy('id', 'desc')->take(1)->first();
+            $from_category = null;
+            if ($item_category) {
+                $from_category = $item_category->to_category_id;
+            }
+            $item_category_list = PartItemCategory::select(
+                'from_category.name as from_category',
+                'to_category.name as to_category',
+                'part_item_categories.remarks as remarks'
+            )
+                ->leftjoin('configs as from_category', 'from_category.id', 'part_item_categories.from_category_id')
+                ->leftjoin('configs as to_category', 'to_category.id', 'part_item_categories.to_category_id')
+                ->where('part_item_categories.item_id', $id)
+                ->get();
+            $item_category_list_count = count($item_category_list);
+            $this->data['from_category'] = $from_category;
+            $this->data['item_category_list'] = $item_category_list;
+            $this->data['item_category_list_count'] = $item_category_list_count;
+            //item category By Parthiban V on 25-06-2021
+
 		}
 
 		//UPDATED BY KARTHICK T ON 15-07-2020
@@ -345,7 +368,8 @@ class PartController extends Controller {
 			//For Discount Group by karthick t on 16-09-2020
 			$part->discount_group_id = (isset($request->discount_group_id) && $request->discount_group_id) ? $request->discount_group_id : null;
 			//For Discount Group by karthick t on 16-09-2020
-			
+            //Default Category Save By Parthiban V on 23-06-2021
+            $part->category_id = (isset($request->category_id) && $request->category_id) ? $request->category_id : null;
 			if ($request->status == 'Inactive') {
 				$part->deleted_at = Carbon::now();
 				$part->deleted_by_id = Auth::user()->id;
@@ -353,6 +377,12 @@ class PartController extends Controller {
 				$part->deleted_at = NULL;
 				$part->deleted_by_id = NULL;
 			}
+			//TCS Details Save By Parthiban V on 25-06-2021
+			if ($request->tcs_status == 'Yes') {
+				$part->tcs_status = 1;
+			}
+			$part->tcs_amount = (isset($request->tcs_amount) && $request->tcs_amount) ? $request->tcs_amount : null;
+			//TCS Details Save By Parthiban V on 25-06-2021
 
 			$part->save();
 
@@ -625,4 +655,50 @@ class PartController extends Controller {
 		return response()->json(['rack_list' => $rack_list]);
 	}
 	//CREATED BY KARTHICK T ON 11-08-2020
+	//Part Category By Parthiban V on 23-06-2020
+	public function updatePartCategoryDetail(Request $request) {
+		//dd($request->all());
+		try {
+			DB::beginTransaction();
+			if ($request->from_category_id == 'undefined') {
+				return response()->json(['success' => false, 'errors' => 'Please From Category!']);
+			}
+			if ($request->to_category_id == 'undefined') {
+				return response()->json(['success' => false, 'errors' => 'Please To Category!']);
+			}
+
+			$part_item_category = new PartItemCategory();
+			$part_item_category->item_id = $request->part_id;
+			$part_item_category->from_category_id = $request->from_category_id;
+			$part_item_category->to_category_id = $request->to_category_id;
+			$part_item_category->remarks = $request->remarks;
+			$part_item_category->created_by_id = Auth::user()->id;
+			$part_item_category->created_at = Carbon::now();
+			$part_item_category->save();
+
+			$item_category_list = PartItemCategory::select(
+				'from_category.name as from_category',
+				'to_category.name as to_category',
+				'part_item_categories.remarks as remarks'
+			)
+				->leftjoin('configs as from_category', 'from_category.id', 'part_item_categories.from_category_id')
+				->leftjoin('configs as to_category', 'to_category.id', 'part_item_categories.to_category_id')
+				->where('part_item_categories.item_id', $request->part_id)
+				->get();
+			$item_category = PartItemCategory::select('to_category_id')->where('item_id', $request->part_id)->orderBy('id', 'desc')->take(1)->first();
+			$from_category = '';
+			if ($item_category) {
+				$from_category = $item_category->to_category_id;
+			}
+			$item_category_list_count = count($item_category_list);
+			DB::commit();
+			return response()->json(['success' => true, 'message' => 'Category Details Updated Successfully!', 'item_category_list' => $item_category_list, 'item_category_list_count' => $item_category_list_count, 'from_category' => $from_category]);
+
+		} catch (Exception $e) {
+			DB::rollBack();
+			return response()->json(['success' => false, 'errors' => ['Exception Error' => $e->getMessage()]]);
+		}
+	}
+
+	//Part Category By Parthiban V on 23-06-2020
 }

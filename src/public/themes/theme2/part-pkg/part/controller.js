@@ -221,12 +221,21 @@ app.component('partForm', {
 
             //For Discount Group by karthick t on 16-09-2020
             self.discount_group_list = response.data.discount_group_list;
-
+            //For Category List By Parthiban V on 23-06-2021
+            self.category_list = response.data.category_list;
             $('#alternate_part_ids').val(self.alt_parts_ids.join());
             $('#upsell_part_ids').val(self.upsell_parts_ids.join());
 
             if (response.data.action == "Edit") {
                 $scope.getSubAggregateBasedonCategory(self.part.aggregate_id);
+                self.item_category_list = response.data.item_category_list;
+                self.item_category_list_count = response.data.item_category_list_count;
+                if (response.data.from_category==null){
+                    self.from_category=response.data.part.category_id;
+                }else{
+                    self.from_category=response.data.from_category;
+                }
+
             }
 
             $rootScope.loading = false;
@@ -236,8 +245,14 @@ app.component('partForm', {
                 } else {
                     self.switch_value = 'Active';
                 }
+                if (self.part.tcs_status==0) {
+                    self.tcs_status = 'No';
+                }else{
+                    self.tcs_status = 'Yes';
+                }
             } else {
                 self.switch_value = 'Active';
+                self.tcs_status = 'No';
             }
         });
 
@@ -664,6 +679,57 @@ app.component('partForm', {
                 });
         }
         //ADD BY KARTHICK T ON 11-08-2020
+        $scope.transferDetail = function(part_id,from_category_id,to_category_id,remarks) {
+            $('#submit-transfer').button('loading');
+            var skip = false;
+            if (from_category_id == 'undefined') {
+                skip = true;
+                custom_noty('error', 'Please Select From Category');
+                $('#submit-transfer').button('reset');
+            }
+            if (to_category_id == 'undefined') {
+                skip = true;
+                custom_noty('error', 'Please Select To Category');
+                $('#submit-transfer').button('reset');
+            }
+            if (skip == false) {
+                var form_data = new FormData();
+                form_data.append('part_id', part_id);
+                form_data.append('from_category_id', from_category_id);
+                form_data.append('to_category_id', to_category_id);
+                form_data.append('remarks', remarks);
+
+                $.ajax({
+                    url:  laravel_routes['updatePartCategoryDetail'],
+                    method: "POST",
+                    data: form_data,
+                    processData: false,
+                    contentType: false,
+                })
+                    .done(function(response) {
+
+                        if (!response.success) {
+                            custom_noty('error', response.errors);
+                            $('#submit-transfer').button('reset');
+                        } else {
+                            custom_noty('success', response.message);
+                            self.item_category_list = response.item_category_list;
+                            self.item_category_list_count = response.item_category_list_count;
+                            self.from_category=response.from_category;
+                            self.to_category.id = '';
+                            self.remarks = '';
+                            $('#submit-transfer').button('reset');
+                            $scope.$apply();
+
+                        }
+                    })
+                    .fail(function(xhr) {
+                        custom_noty('error', 'Something went wrong at server.');
+                        $('#upload').button('reset');
+                    })
+            }
+        }
+
     }
 });
 //------------------------------------------------------------------------------------------------------------------------

@@ -26,6 +26,7 @@
                             <li><a class="btn-pills" data-target="#alternate-parts" role="tab" data-toggle="tab" aria-expanded="true">Alternate Parts</a></li>
                             <li><a class="btn-pills" data-target="#upsell-parts" data-toggle="tab" role="tab" aria-expanded="true">Upsell Parts</a></li>
                             <li><a class="btn-pills" data-target="#rack-parts" data-toggle="tab" role="tab" aria-expanded="true">Rack Parts</a></li>
+                            <li ng-if="$ctrl.action=='Edit'"><a class="btn-pills" data-target="#parts-category" data-toggle="tab" role="tab" aria-expanded="true">Parts Categories</a></li>
                             <li ng-if="$ctrl.count_attachments > 0"><a class="btn-pills" data-target="#attachment-parts" data-toggle="tab" role="tab" aria-expanded="true">Parts Image</a></li>
                         </ul>
                     </div><!-- Filters -->
@@ -340,6 +341,39 @@
                                                                     </div><!-- column -->
                                                                 </div>
                                                                 <div class="row custom-row">
+                                                                    <div class="col-md-3">
+                                                                        <div class="form-group">
+                                                                            <label>Category</label>
+                                                                            <ui-select ng-model="$ctrl.part.category_id" theme="select2">
+                                                                                <ui-select-match placeholder="Select Category">
+                                                                                    {{$select.selected.name || $select.selected}}
+                                                                                </ui-select-match>
+                                                                                <ui-select-choices repeat="i.id as i in $ctrl.category_list | propsFilter: {name: $select.search}">
+                                                                                    <div ng-bind-html="i.name | highlight: $select.search"></div>
+                                                                                </ui-select-choices>
+                                                                            </ui-select>
+                                                                            <input type="hidden" id="category_id" name="category_id" value="{{$ctrl.part.category_id}}">
+                                                                        </div><!-- Field -->
+                                                                    </div>
+                                                                    <div class="col-md-3">
+                                                                        <div class="input-text form-group">
+                                                                            <label>
+                                                                                TCS Status
+                                                                            </label>
+                                                                            <div class="tab-switch">
+                                                                                <md-switch ng-model="$ctrl.tcs_status" aria-label="Switch 3" ng-true-value="'No'" ng-false-value="'Yes'" class="md-warn type-2">
+                                                                                    {{ $ctrl.tcs_status }}
+                                                                                </md-switch>
+                                                                                <input type="hidden" name="tcs_status" value="{{$ctrl.tcs_status}}">
+                                                                            </div>
+                                                                        </div><!-- Form Group -->
+                                                                    </div><!-- Column -->
+                                                                    <div class="col-md-3">
+                                                                        <div class="form-group">
+                                                                            <label>TCS Amount</label>
+                                                                            <input type="text" name="tcs_amount" ng-model='$ctrl.part.tcs_amount' class="form-control" placeholder="Enter TCS Amount" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
+                                                                        </div><!-- Field -->
+                                                                    </div><!-- column -->
                                                                     <div class="col-md-3">
                                                                         <div class="input-text form-group">
                                                                             <label>
@@ -682,8 +716,7 @@
                                                                 <div class="row">
                                                                     <div class="col-md-12">
                                                                         <a class="btn btn-primary btn-prev">Previous</a>
-                                                                        <a ng-show="$ctrl.count_attachments > 0" class="btn btn-bordered btn-nxt">Next</a>
-                                                                        <button type="submit" ng-if="$ctrl.count_attachments == 0" class="btn btn-bordered submit">Submit</button>
+                                                                        <a class="btn btn-bordered btn-nxt">Next</a>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -724,6 +757,88 @@
                                                                     <div class="col-md-12">
                                                                         <a class="btn btn-primary btn-prev">Previous</a>
                                                                         <button type="submit" ng-if="$ctrl.count_attachments > 0" class="btn btn-bordered submit">Submit</button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div><!-- Row -->
+                                                </div><!-- Tab Pane -->
+                                                <div class="tab-pane fade" id="parts-category" data-animation="fadeInUp" data-animation-delay="300">
+                                                    <div class="row">
+                                                        <div class="col-md-3">
+                                                            <div class="form-group">
+                                                                <label>From Category</label>
+                                                                <ui-select ng-model="$ctrl.from_category" theme="select2">
+                                                                    <ui-select-match placeholder="Select From Category">
+                                                                        {{$select.selected.name || $select.selected}}
+                                                                    </ui-select-match>
+                                                                    <ui-select-choices repeat="i.id as i in $ctrl.category_list | propsFilter: {name: $select.search}">
+                                                                        <div ng-bind-html="i.name | highlight: $select.search"></div>
+                                                                    </ui-select-choices>
+                                                                </ui-select>
+                                                                <input type="hidden" id="from_category_id" name="from_category_id" value="{{$ctrl.from_category}}">
+                                                            </div><!-- Field -->
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <div class="form-group">
+                                                                <label>To Category</label>
+                                                                <ui-select ng-model="$ctrl.to_category.id" theme="select2">
+                                                                    <ui-select-match placeholder="Select To Category">
+                                                                        {{$select.selected.name || $select.selected}}
+                                                                    </ui-select-match>
+                                                                    <ui-select-choices repeat="i.id as i in $ctrl.category_list | propsFilter: {name: $select.search}">
+                                                                        <div ng-bind-html="i.name | highlight: $select.search"></div>
+                                                                    </ui-select-choices>
+                                                                </ui-select>
+                                                                <input type="hidden" id="to_category_id" name="to_category_id" value="{{$ctrl.to_category.id}}">
+                                                            </div><!-- Field -->
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <div class="form-group">
+                                                                <label>Remarks</label>
+                                                                <input type="text" name="remarks" class="form-control" ng-model="$ctrl.remarks"  placeholder="Enter Remarks">
+                                                            </div><!-- Field -->
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <div class="form-group">
+                                                                <label class="opacity-0">Submit</label>
+                                                                <button type="button" id="submit-transfer" class="btn btn-md btn-primary" ng-click="transferDetail($ctrl.part.id,$ctrl.from_category,$ctrl.to_category.id,$ctrl.remarks)">Submit</button>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-12">
+                                                            <div class="table-responsive table-scroll">
+                                                                <table id="transfer_list" class="table">
+                                                                    <thead class="text-primary">
+                                                                    <tr>
+                                                                        <th>S. No</th>
+                                                                        <th>From Category</th>
+                                                                        <th>To Category</th>
+                                                                        <th>Remarks</th>
+                                                                    </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                    <tr ng-repeat="(key,category) in $ctrl.item_category_list">
+                                                                        <td>{{key + 1}}</td>
+                                                                        <td>{{category.from_category ? category.from_category : '--'}}</td>
+                                                                        <td>{{category.to_category ? category.to_category : '--'}}</td>
+                                                                        <td>{{category.remarks ? category.remarks : '--'}}</td>
+                                                                    </tr>
+                                                                    <tr ng-if="$ctrl.item_category_list_count == 0">
+                                                                        <td colspan="4" style="text-align: center;">
+                                                                            No data's found
+                                                                        </td>
+                                                                    </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div><!-- Table Responsive -->
+                                                        </div><!-- Column -->
+                                                        <div class="col-md-12">
+                                                            <div class="tab-pane-footer">
+                                                                <div class="row">
+                                                                    <div class="col-md-12">
+                                                                        <a class="btn btn-primary btn-prev">Previous</a>
+                                                                        <a ng-if="$ctrl.count_attachments > 0" class="btn btn-bordered btn-nxt">Next</a>
+                                                                        <button type="submit" ng-if="$ctrl.count_attachments == 0" class="btn btn-bordered submit">Submit</button>
                                                                     </div>
                                                                 </div>
                                                             </div>
