@@ -30,6 +30,7 @@ class PriceDiscountController extends Controller
 				'price_discounts.customer_discount',
 				DB::raw('IF(price_discounts.deleted_at IS NULL, "Active","Inactive") as status'),
 				DB::raw('IF(price_discounts.effective_from IS NULL, "--",DATE_FORMAT(price_discounts.effective_from,"%d-%m-%Y")) as effective_from'),
+                DB::raw('IF(price_discounts.effective_to IS NULL, "--",DATE_FORMAT(price_discounts.effective_to,"%d-%m-%Y")) as effective_to'),
 			])
 			->leftjoin('regions', 'regions.id', 'price_discounts.region_id')
 			->leftjoin('discount_groups', 'discount_groups.id', 'price_discounts.discount_group_id')
@@ -90,7 +91,8 @@ class PriceDiscountController extends Controller
     				'price_discounts.*',
     				'regions.name as region_name',
     				'discount_groups.name as discount_group_name',
-                DB::raw('DATE_FORMAT(price_discounts.effective_from,"%d-%m-%Y") as effective_from')
+                DB::raw('DATE_FORMAT(price_discounts.effective_from,"%d-%m-%Y") as effective_from'),
+                DB::raw('DATE_FORMAT(price_discounts.effective_to,"%d-%m-%Y") as effective_to')
     			)->withTrashed()
     			->leftjoin('regions','regions.id','price_discounts.region_id')
     			->leftjoin('discount_groups','discount_groups.id','price_discounts.discount_group_id')
@@ -154,6 +156,7 @@ class PriceDiscountController extends Controller
 				$price_discount->deleted_by_id = NULL;
 			}
             $price_discount->effective_from = date('Y-m-d',strtotime($request->effective_from));
+            $price_discount->effective_to = date('Y-m-d',strtotime($request->effective_to));
 			$price_discount->save();
 			DB::commit();
 			if (!($request->id)) {
