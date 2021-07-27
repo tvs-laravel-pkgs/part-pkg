@@ -82,6 +82,18 @@
                                 </div>
                                 <div class="col-md-3 col-sm-6">
                                     <div class="input-text form-group">
+                                        <label>Effective From<span class="mandatory" ng-hide="$ctrl.type == 'view'"> *</span></label>
+                                        <span ng-show="$ctrl.type == 'view'">{{$ctrl.price_discount.effective_from ? $ctrl.price_discount.effective_from : '--'}}</span>
+                                        <div class="input-group date" data-provide="datepicker" ng-hide="$ctrl.type == 'view'">
+                                            <input type="text" class="form-control required  " name="effective_from" placeholder="Select Effective From Date" value="{{$ctrl.price_discount.effective_from}}" />
+                                            <div class="input-group-addon">
+                                                <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="input-text form-group">
                                         <label>
                                             Active Status
                                             <sup class="mandatory" ng-hide="$ctrl.type == 'view'">*</sup>

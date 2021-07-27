@@ -29,6 +29,7 @@ class PriceDiscountController extends Controller
 				'price_discounts.purchase_discount',
 				'price_discounts.customer_discount',
 				DB::raw('IF(price_discounts.deleted_at IS NULL, "Active","Inactive") as status'),
+				DB::raw('IF(price_discounts.effective_from IS NULL, "--",DATE_FORMAT(price_discounts.effective_from,"%d-%m-%Y")) as effective_from'),
 			])
 			->leftjoin('regions', 'regions.id', 'price_discounts.region_id')
 			->leftjoin('discount_groups', 'discount_groups.id', 'price_discounts.discount_group_id')
@@ -88,7 +89,8 @@ class PriceDiscountController extends Controller
     		$price_discount = PriceDiscount::select(
     				'price_discounts.*',
     				'regions.name as region_name',
-    				'discount_groups.name as discount_group_name'
+    				'discount_groups.name as discount_group_name',
+                DB::raw('DATE_FORMAT(price_discounts.effective_from,"%d-%m-%Y") as effective_from')
     			)->withTrashed()
     			->leftjoin('regions','regions.id','price_discounts.region_id')
     			->leftjoin('discount_groups','discount_groups.id','price_discounts.discount_group_id')
@@ -109,17 +111,12 @@ class PriceDiscountController extends Controller
 			$error_messages = [
 				'region_id.required' => 'Region is Required',
 				'discount_group_id.required' => 'Discount Group is Required',
-				'discount_group_id.unique' => 'Discount for same region is is already taken',
 				'purchase_discount.required' => 'Purchase Discount is Required',
 				'approved_discount.required' => 'Approved Discount is Required',
 				'customer_discount.required' => 'Customer Discount is Required',
 			];
 			$validator = Validator::make($request->all(), [
 				'region_id' => 'required',
-				'discount_group_id' => [
-					'required:true',
-					'unique:price_discounts,discount_group_id,' . $request->id . ',id,region_id,' . $request->region_id,
-				],
 				'purchase_discount' => 'required',
 				'approved_discount' => 'required',
 				'customer_discount' => 'required',
@@ -128,7 +125,15 @@ class PriceDiscountController extends Controller
 				return response()->json(['success' => false, 'errors' => $validator->errors()->all()]);
 			}
 			DB::beginTransaction();
-			if (!$request->id) {
+            $price_discount_check = PriceDiscount::withTrashed()->where('region_id',$request->region_id)->whereNull('deleted_at')->where('discount_group_id',$request->discount_group_id);
+            if ($request->id){
+                $price_discount_check=$price_discount_check->where('id','!=',$request->id);
+            }
+            $price_discount_check=$price_discount_check->pluck('id')->first();
+            if ($price_discount_check) {
+                return response()->json(['success' => false, 'errors' => ['Discount for same region is is already taken']]);
+            }
+            if (!$request->id) {
 				$price_discount = new PriceDiscount;
 				$price_discount->company_id = Auth::user()->company_id;
 				$price_discount->created_by_id = Auth::user()->id;
@@ -148,6 +153,7 @@ class PriceDiscountController extends Controller
 				$price_discount->deleted_at = NULL;
 				$price_discount->deleted_by_id = NULL;
 			}
+            $price_discount->effective_from = date('Y-m-d',strtotime($request->effective_from));
 			$price_discount->save();
 			DB::commit();
 			if (!($request->id)) {
@@ -164,7 +170,10 @@ class PriceDiscountController extends Controller
 	public function deleteData(Request $request){
 		DB::beginTransaction();
 		try {
-			$price_discount = PriceDiscount::withTrashed()->where('id', $request->id)->forceDelete();
+			$price_discount = PriceDiscount::withTrashed()->where('id', $request->id)->first();
+            $price_discount->deleted_by_id=Auth::user()->id;
+            $price_discount->deleted_at=Carbon::now();
+            $price_discount->save();
 			if ($price_discount) {
 				DB::commit();
 				return response()->json(['success' => true, 'message' => 'Price Discount Deleted Successfully']);

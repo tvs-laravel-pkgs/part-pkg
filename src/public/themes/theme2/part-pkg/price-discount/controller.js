@@ -55,6 +55,7 @@ app.component('priceDiscountList', {
                 { data: 'discount_group', name: 'discount_groups.name' },
                 { data: 'purchase_discount', name: 'price_discounts.purchase_discount' },
                 { data: 'customer_discount', name: 'price_discounts.customer_discount' },
+                { data: 'effective_from', name: 'price_discounts.effective_from' },
                 { data: 'status', name: '' },
 
             ],
@@ -251,6 +252,9 @@ app.component('priceDiscountForm', {
                     required: true,
                 },
                 'customer_discount': {
+                    required: true,
+                },
+                'effective_from': {
                     required: true,
                 },
             },
