@@ -375,6 +375,27 @@
                                                                         </div><!-- Field -->
                                                                     </div><!-- column -->
                                                                     <div class="col-md-3">
+                                                                        <div class="form-group">
+                                                                            <label>Retail Price</label>
+                                                                            <input type="text" name="retail_price" ng-model='$ctrl.part.retail_price' class="form-control" placeholder="Enter Retail Price" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
+                                                                        </div><!-- Field -->
+                                                                    </div><!-- column -->
+                                                                </div>
+                                                                <div class="row custom-row">
+                                                                    <div class="col-md-3">
+                                                                        <div class="input-text form-group">
+                                                                            <label>
+                                                                                Tax Status
+                                                                            </label>
+                                                                            <div class="tab-switch">
+                                                                                <md-switch ng-model="$ctrl.tax_status" aria-label="Switch 3" ng-true-value="'No'" ng-false-value="'Yes'" class="md-warn type-2">
+                                                                                    {{ $ctrl.tax_status }}
+                                                                                </md-switch>
+                                                                                <input type="hidden" name="tax_status" value="{{$ctrl.tax_status}}">
+                                                                            </div>
+                                                                        </div><!-- Form Group -->
+                                                                    </div><!-- Column -->
+                                                                    <div class="col-md-3">
                                                                         <div class="input-text form-group">
                                                                             <label>
                                                                                 Active Status

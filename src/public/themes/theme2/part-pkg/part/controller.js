@@ -250,9 +250,16 @@ app.component('partForm', {
                 }else{
                     self.tcs_status = 'Yes';
                 }
+                //Tax Satus and retail price Save By Parthiban V on 02-08-2021
+                if (self.part.tax_status==1) {
+                    self.tax_status = 'Yes';
+                }else{
+                    self.tax_status = 'No';
+                }
             } else {
                 self.switch_value = 'Active';
                 self.tcs_status = 'No';
+                self.tax_status = 'Yes'; //Tax Satus and retail price Save By Parthiban V on 02-08-2021
             }
         });
 

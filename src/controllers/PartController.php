@@ -381,6 +381,11 @@ class PartController extends Controller {
 			if ($request->tcs_status == 'Yes') {
 				$part->tcs_status = 1;
 			}
+            //Tax Satus and retail price Save By Parthiban V on 02-08-2021
+            if ($request->tax_status == 'No') {
+                $part->tax_status = 0;
+            }
+            $part->retail_price = (isset($request->retail_price) && $request->retail_price) ? $request->retail_price : null;
 			$part->tcs_amount = (isset($request->tcs_amount) && $request->tcs_amount) ? $request->tcs_amount : null;
 			//TCS Details Save By Parthiban V on 25-06-2021
 
