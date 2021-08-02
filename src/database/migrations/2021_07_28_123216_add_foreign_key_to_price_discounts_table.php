@@ -14,6 +14,7 @@ class AddForeignKeyToPriceDiscountsTable extends Migration
     public function up()
     {
         Schema::table('price_discounts', function (Blueprint $table) {
+            $table->dropUnique('price_discounts_company_id_region_id_discount_group_id_unique');
             $table->foreign("company_id")->references("id")->on("companies")->onDelete("CASCADE")->onUpdate("CASCADE");
             $table->foreign("region_id")->references("id")->on("regions")->onDelete("CASCADE")->onUpdate("CASCADE");
             $table->foreign("discount_group_id")->references("id")->on("discount_groups")->onDelete("CASCADE")->onUpdate("CASCADE");
@@ -32,6 +33,7 @@ class AddForeignKeyToPriceDiscountsTable extends Migration
             $table->dropForeign('price_discounts_company_id_foreign');
             $table->dropForeign('price_discounts_region_id_foreign');
             $table->dropForeign('price_discounts_discount_group_id_foreign');
+            $table->unique(['company_id','region_id','discount_group_id']);
         });
     }
 }
