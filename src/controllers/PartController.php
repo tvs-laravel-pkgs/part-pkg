@@ -18,6 +18,7 @@ use Abs\PartPkg\Aggregate;
 use Abs\PartPkg\SubAggregate;
 use Abs\PartPkg\PartRack;
 use Abs\PartPkg\Rack;
+use App\PartType;
 use Auth;
 use Carbon\Carbon;
 use DB;
@@ -121,7 +122,8 @@ class PartController extends Controller {
 		$this->data['brand_list'] = collect(Config::where('config_type_id', 131)->select('name', 'id')->groupBy('name')->get())->prepend(['id' => '', 'name' => 'Select Brand']);
 		$this->data['component_list'] = collect(Config::where('config_type_id', 133)->select('name', 'id')->groupBy('name')->get())->prepend(['id' => '', 'name' => 'Select Component']);
 		// $this->data['rack_list'] = collect(Config::where('config_type_id', 134)->select('name', 'id')->groupBy('name')->get())->prepend(['id' => '', 'name' => 'Select Rack']);
-
+		//Part-Type List BY SivaKumar ON 26-08-2021
+		$this->data['part_type_list'] = PartType::select('id', 'name')->get();
 		$this->data['vehicle_model_list'] = new VehicleModel;
 		$this->data['rack_type_list'] = collect(Config::where('config_type_id', 134)->select('name', 'id')->groupBy('name')->get())->prepend(['id' => '', 'name' => 'Select Rack']);
 		$this->data['category_list'] = collect(Config::where('config_type_id', 253)->select('name', 'id')->groupBy('name')->get())->prepend(['id' => '', 'name' => 'Select Category']);
@@ -364,7 +366,7 @@ class PartController extends Controller {
 			$part->discount = $request->discount;
 			$part->display_order = $request->display_order;
 			$part->description = $request->description;
-			
+			$part->part_type_id = $request->part_type_id;//Part-Type List BY SivaKumar ON 26-08-2021
 			//For Discount Group by karthick t on 16-09-2020
 			$part->discount_group_id = (isset($request->discount_group_id) && $request->discount_group_id) ? $request->discount_group_id : null;
 			//For Discount Group by karthick t on 16-09-2020

@@ -383,6 +383,20 @@
                                                                 </div>
                                                                 <div class="row custom-row">
                                                                     <div class="col-md-3">
+                                                                        <div class="form-group">
+                                                                            <label>Part Type</label>
+                                                                            <ui-select ng-model="$ctrl.part.part_type_id" theme="select2">
+                                                                                <ui-select-match placeholder="Select Part Type">
+                                                                                    {{$select.selected.name || $select.selected}}
+                                                                                </ui-select-match>
+                                                                                <ui-select-choices repeat="i.id as i in $ctrl.part_type_list | propsFilter: {name: $select.search}">
+                                                                                    <div ng-bind-html="i.name | highlight: $select.search"></div>
+                                                                                </ui-select-choices>
+                                                                            </ui-select>
+                                                                            <input type="hidden" id="part_type_id" name="part_type_id" value="{{$ctrl.part.part_type_id}}">
+                                                                        </div><!-- Field -->
+                                                                    </div>
+                                                                    <div class="col-md-3">
                                                                         <div class="input-text form-group">
                                                                             <label>
                                                                                 Battery Purchase Tax Status

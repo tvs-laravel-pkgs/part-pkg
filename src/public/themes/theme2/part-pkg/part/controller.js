@@ -223,6 +223,7 @@ app.component('partForm', {
             self.discount_group_list = response.data.discount_group_list;
             //For Category List By Parthiban V on 23-06-2021
             self.category_list = response.data.category_list;
+            self.part_type_list = response.data.part_type_list;
             $('#alternate_part_ids').val(self.alt_parts_ids.join());
             $('#upsell_part_ids').val(self.upsell_parts_ids.join());
 
