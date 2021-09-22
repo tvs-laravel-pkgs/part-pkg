@@ -29,7 +29,6 @@ class PartPriceDetailController extends Controller
 				DB::raw('COALESCE(DATE_FORMAT(part_pricing_details.effective_to,"%d-%m-%Y"), "--") as effective_to'),
 			])
 			->leftjoin('parts', 'parts.id', 'part_pricing_details.part_id')
-			->orderBy('part_pricing_details.id','desc')
 			->where(function ($query) use ($request) {
 
 				if (!empty($request->date_range)) {
@@ -50,7 +49,7 @@ class PartPriceDetailController extends Controller
 					$query->whereDate('part_pricing_details.created_at', '=', $today);
 
 				}
-			})->get();
+			})->orderBy('part_pricing_details.id','DESC')->get();
 		return Datatables::of($part_price_details)
 			->addColumn('action', function ($part_price_details) {
 				$img1 = asset('public/themes/' . $this->data['theme'] . '/img/content/table/edit-yellow.svg');
