@@ -126,8 +126,22 @@
 	    when('/part-pkg/price-discount/:type/:id?', {
 	    	template: '<price-discount-form></price-discount-form>',
 	        title: 'Price Discount Form',
-	    });
+	    }).
 	    //Added by karthick t on 17-09-2020
+		//Part price details by Rajarajan S on 20-09-2021
+	    when('/part-pkg/part-price-detail/list', {
+	        template: '<part-price-detail-list></part-price-detail-list>',
+	        title: 'Part',
+	    }).
+	    when('/part-pkg/part-price-detail/add', {
+	        template: '<part-price-detail-form></part-price-detail-form>',
+	        title: 'Add Part',
+	    }).
+	    when('/part-pkg/part-price-detail/edit/:id', {
+	        template: '<part-price-detail-form></part-price-detail-form>',
+	        title: 'Edit Part',
+	    });
+		//Part price details by Rajarajan S on 20-09-2021
 	}]);
 
 	//Parts
@@ -176,7 +190,10 @@
     var price_discount_list_template_url = '{{asset($part_pkg_prefix.'/public/themes/'.$theme.'/part-pkg/price-discount/list.html')}}';
     var price_discount_form_template_url = '{{asset($part_pkg_prefix.'/public/themes/'.$theme.'/part-pkg/price-discount/form.html')}}';
     //Added by karthick t on 17-09-2020
-    
+	//part price detials by Rajarajan S on 20-09-2021
+    var part_price_detail_template_url = '{{asset($part_pkg_prefix.'/public/themes/'.$theme.'/part-pkg/part-price-detail/list.html')}}';
+    var part_price_detail_form_template_url = '{{asset($part_pkg_prefix.'/public/themes/'.$theme.'/part-pkg/part-price-detail/form.html')}}';
+	//part price detials by Rajarajan S on 20-09-2021
 </script>
 <!-- <script type='text/javascript' src='{{asset($part_pkg_prefix.'/public/themes/'.$theme.'/part-pkg/part/controller.js')}}'></script> -->
 
