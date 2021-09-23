@@ -19,15 +19,15 @@ class PartPriceDetailController extends Controller
 	}
     public function getPartPriceDetailList(Request $request) {
 		$part_price_details = PartPricingDetail::withTrashed()
-			->select([
+			->select(
 				'part_pricing_details.id',
-				'parts.name as name',
-				'parts.code as code',
+				'parts.name',
+				'parts.code',
 				DB::raw('format(ROUND(part_pricing_details.regular_price),2,"en_IN") as regular_price'),
 				DB::raw('format(ROUND(part_pricing_details.retail_price),2,"en_IN") as retail_price'),
 				DB::raw('COALESCE(DATE_FORMAT(part_pricing_details.effective_from,"%d-%m-%Y"), "--") as effective_from'),
-				DB::raw('COALESCE(DATE_FORMAT(part_pricing_details.effective_to,"%d-%m-%Y"), "--") as effective_to'),
-			])
+				DB::raw('COALESCE(DATE_FORMAT(part_pricing_details.effective_to,"%d-%m-%Y"), "--") as effective_to')
+			)
 			->leftjoin('parts', 'parts.id', 'part_pricing_details.part_id')
 			->where(function ($query) use ($request) {
 
@@ -49,7 +49,8 @@ class PartPriceDetailController extends Controller
 					$query->whereDate('part_pricing_details.created_at', '=', $today);
 
 				}
-			})->orderBy('part_pricing_details.id','DESC')->get();
+			})
+			->orderBy('part_pricing_details.id','desc');
 		return Datatables::of($part_price_details)
 			->addColumn('action', function ($part_price_details) {
 				$img1 = asset('public/themes/' . $this->data['theme'] . '/img/content/table/edit-yellow.svg');
@@ -58,7 +59,7 @@ class PartPriceDetailController extends Controller
 				$img_delete_active = asset('public/themes/' . $this->data['theme'] . '/img/content/table/delete-active.svg');
 				$output = '';
 				$output .= '<a href="#!/part-pkg/part-price-detail/edit/' . $part_price_details->id . '" id = "" title="Edit"><img src="' . $img1 . '" alt="Edit" class="img-responsive" onmouseover=this.src="' . $img1 . '" onmouseout=this.src="' . $img1 . '"></a>';
-                return $output;
+				return $output;
 			})
 			->make(true);
 	}

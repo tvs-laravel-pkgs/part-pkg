@@ -54,10 +54,10 @@ app.component('partPriceDetailList', {
 
             columns: [
                 { data: 'action', class: 'action', name: 'action', searchable: false },
-                { data: 'code', name: 'code', searchable: true},
-                { data: 'name', name: 'name',searchable: true},
+                { data: 'code', name: 'parts.code', searchable: true},
+                { data: 'name', name: 'parts.name',searchable: true},
                 { data: 'regular_price', name: 'regular_price' ,searchable: true},
-                { data: 'retail_price', name: 'retail_price',searchable: false },
+                { data: 'retail_price', name: 'retail_price',searchable: true },
                 { data: 'effective_from', name: 'effective_from',searchable: false },
                 { data: 'effective_to', name: 'effective_to', searchable: false},
 
