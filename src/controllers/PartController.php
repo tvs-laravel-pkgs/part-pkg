@@ -251,7 +251,18 @@ class PartController extends Controller {
             $this->data['item_category_list'] = $item_category_list;
             $this->data['item_category_list_count'] = $item_category_list_count;
             //item category By Parthiban V on 25-06-2021
-
+			//For Part price details by Rajarajan S on 27-09-2021
+			$this->data['part_price_details'] = $part_price_details =  DB::table('part_pricing_details')
+				->select(
+				DB::raw('format(ROUND(regular_price),2,"en_IN") as regular_price'),
+				DB::raw('format(ROUND(retail_price),2,"en_IN") as retail_price'),
+				DB::raw('DATE_FORMAT(effective_from,"%d-%m-%Y") as effective_from'),
+				DB::raw('DATE_FORMAT(effective_to,"%d-%m-%Y") as effective_to'),
+				DB::raw('DATE_FORMAT(created_at,"%d-%m-%Y") as created_at')
+				)->where('part_pricing_details.part_id',$id)
+				->orderBy('part_pricing_details.id','desc')->get();
+			$this->data['part_price_details_list_count'] = count($part_price_details);
+			//For Part price details by Rajarajan S on 27-09-2021
 		}
 
 		//UPDATED BY KARTHICK T ON 15-07-2020
