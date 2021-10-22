@@ -387,6 +387,11 @@ class PartController extends Controller {
             if ($request->tax_status == 'No') {
                 $part->tax_status = 0;
             }
+            //Serial Number Opted Save By Parthiban V on 22-10-2021
+            if ($request->is_serial_no_opted == 'Yes') {
+                $part->is_serial_no_opted = 1;
+            }
+
             $part->retail_price = (isset($request->retail_price) && $request->retail_price) ? $request->retail_price : null;
 			$part->tcs_amount = (isset($request->tcs_amount) && $request->tcs_amount) ? $request->tcs_amount : null;
 			//TCS Details Save By Parthiban V on 25-06-2021

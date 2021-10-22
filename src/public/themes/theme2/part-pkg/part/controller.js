@@ -257,10 +257,16 @@ app.component('partForm', {
                 }else{
                     self.tax_status = 'No';
                 }
+                if (self.part.is_serial_no_opted==1) {
+                    self.is_serial_no_opted = 'Yes';
+                }else{
+                    self.is_serial_no_opted = 'No';
+                }
             } else {
                 self.switch_value = 'Active';
                 self.tcs_status = 'No';
                 self.tax_status = 'Yes'; //Tax Satus and retail price Save By Parthiban V on 02-08-2021
+                self.is_serial_no_opted = 'No'; //Serial Number Opted Save By Parthiban V on 22-10-2021
             }
         });
 
