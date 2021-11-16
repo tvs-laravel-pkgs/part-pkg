@@ -1,0 +1,105 @@
+<div class="content-wrap">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="page-header-inner">
+            <div class="page-header-content-left">
+                <div class="page-header-content button-block">
+                    <a href="#!/part-pkg/part-price-detail/list" type="button" class="btn-back btn-img">
+                        <img class="img-responsive" src="./public/theme/img/content/previous.svg">
+                    </a>
+                </div>
+                <div class="page-header-content title-block">
+                    <h1 class="title">{{$ctrl.action}} Part Price Detail </h1>
+                    <p class="subtitle">Master / <a href="#!/part-pkg/part-price-detail/list"> Part Price Detail </a> / {{$ctrl.action}} </p>
+                </div>
+            </div>
+        </div><!-- Page Header Inner -->
+    </div><!-- Page Header -->
+    <!-- Page Main Content -->
+    <form id="form-part-price-detail">
+        <input type="hidden" name="id" value="{{$ctrl.part_price_detail.id}}">
+        <div class="page-main-content">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="page-form pb-60">
+                            <div class="row">
+                                <div class="col-md-3 col-sm-6" ng-if="$ctrl.action == 'Add'">
+                                    <div class="form-group">
+                                        <label>Part Code <span class="mandatory">*</span></label>
+                                        <md-autocomplete class="type-md" md-items="option in $ctrl.searchPartCode($ctrl.PartCodeSearchText)"
+                                         md-selected-item="$ctrl.part_price_detail.code" md-search-text="$ctrl.PartCodeSearchText" md-item-text="option.code"
+                                         md-min-length="3" placeholder="Part Code" md-autofocus>
+                                            <md-item-template>
+                                                <span>
+                                                    {{option.code}}
+                                                </span>
+                                            </md-item-template>
+                                            <md-not-found>
+                                                No Part Code matching "{{$ctrl.PartCodeSearchText}}" were found.
+                                            </md-not-found>
+                                        </md-autocomplete>
+                                        <input type="hidden" id="part_id" name="part_id" value="{{$ctrl.part_price_detail.code.id}}">
+                                        <div class="part_id_error"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-6" ng-if="$ctrl.action == 'Edit'">
+                                    <div class="form-group">
+                                        <label>Part Code <span class="mandatory">*</span></label>
+                                        <span>{{$ctrl.part_price_detail.code}}</span>
+                                        <input type="hidden" id="part_id" name="part_id" value="{{$ctrl.part_price_detail.part_id}}">
+                                    </div>
+                                 </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="input-text form-group">
+                                        <label>Regular Price<span class="mandatory"> *</span></label>
+                                        <input type="text" name="regular_price" class="form-control" value="{{$ctrl.part_price_detail.regular_price}}" placeholder="Enter Regular Price" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
+                                    </div><!-- Field -->
+                                    <div class="regular_price_error"></div>
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="input-text form-group">
+                                        <label>Retail Price<span class="mandatory"> *</span></label>
+                                        <input type="text" name="retail_price" class="form-control" value="{{$ctrl.part_price_detail.retail_price}}" placeholder="Enter Retail Price" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
+                                    </div><!-- Field -->
+                                    <div class="retail_price_error"></div>
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="form-group">
+                                        <label>Effective From <sup class="mandatory">*</sup></label>
+                                        <div class="input-group date" data-provide="datepicker" data-date-auto-close="true">
+                                            <input type="text" name="effective_from" class="form-control" placeholder="Select Invoice Date" value="{{$ctrl.part_price_detail.effective_from}}" autocomplete="off"/>
+                                            <div class="input-group-addon">
+                                                <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
+                                            </div>
+                                        </div><!-- Input Group -->
+                                    </div><!-- Feild -->
+                                    <div class="effective_from_error"></div>
+                                </div><!-- Column -->
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="form-group">
+                                        <label>Effective To <sup class="mandatory">*</sup></label>
+                                        <div class="input-group date" data-provide="datepicker" data-date-auto-close="true">
+                                            <input type="text" name="effective_to" class="form-control" placeholder="Select Invoice Date" value="{{$ctrl.part_price_detail.effective_to}}" autocomplete="off"/>
+                                            <div class="input-group-addon">
+                                                <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
+                                            </div>
+                                        </div><!-- Input Group -->
+                                    </div><!-- Feild -->
+                                    <div class="effective_to_error"></div>
+                                </div><!-- Column -->
+                            </div>
+                        </div>
+                    </div><!-- Page Form -->
+                    <div class="page-form-footer">
+                        <a class="btn-link" href="#!/part-pkg/part-price-detail/list">Cancel</a>
+                        <button type="submit" id="submit" class="btn btn-primary">Save</button>
+                    </div><!-- Modal Footer -->
+                </div><!-- Column -->
+            </div><!-- Row -->
+        </div><!-- Container -->
+</div><!-- Page Main Content -->
+</form>
+</div><!-- Content Wrap -->

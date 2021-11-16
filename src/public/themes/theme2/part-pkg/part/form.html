@@ -26,6 +26,7 @@
                             <li><a class="btn-pills" data-target="#alternate-parts" role="tab" data-toggle="tab" aria-expanded="true">Alternate Parts</a></li>
                             <li><a class="btn-pills" data-target="#upsell-parts" data-toggle="tab" role="tab" aria-expanded="true">Upsell Parts</a></li>
                             <li><a class="btn-pills" data-target="#rack-parts" data-toggle="tab" role="tab" aria-expanded="true">Rack Parts</a></li>
+                            <li ng-if="$ctrl.action=='Edit'"><a class="btn-pills" data-target="#parts-price-details" data-toggle="tab" role="tab" aria-expanded="true">Parts Price Details</a></li>
                             <li ng-if="$ctrl.action=='Edit'"><a class="btn-pills" data-target="#parts-category" data-toggle="tab" role="tab" aria-expanded="true">Parts Categories</a></li>
                             <li ng-if="$ctrl.count_attachments > 0"><a class="btn-pills" data-target="#attachment-parts" data-toggle="tab" role="tab" aria-expanded="true">Parts Image</a></li>
                         </ul>
@@ -751,7 +752,7 @@
                                                                 <div class="row">
                                                                     <div class="col-md-12">
                                                                         <a class="btn btn-primary btn-prev">Previous</a>
-                                                                        <a ng-if="$ctrl.action=='Edit'" class="btn btn-bordered btn-nxt">Next</a>
+                                                                        <a ng-show="$ctrl.action=='Edit'" class="btn btn-bordered btn-nxt">Next</a>
                                                                         <button type="submit" ng-if="$ctrl.action=='Add'" class="btn btn-bordered submit">Submit</button>
                                                                     </div>
                                                                 </div>
@@ -798,6 +799,64 @@
                                                             </div>
                                                         </div>
                                                     </div><!-- Row -->
+                                                </div><!-- Tab Pane -->
+                                                <div class="tab-pane fade" id="parts-price-details" data-animation="fadeInUp" data-animation-delay="300">
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="form-page">
+                                                                <p class="color-primary"><b>Parts Price Details</b></p>
+                                                                <div class="page-content-inner page-boxed">
+                                                                    <div class="row">
+                                                                        <div class="col-md-12">
+                                                                            <div class="table-responsive" id="upsell_part_parts">
+                                                                                <table class="table table-striped" id="upsell_parts_table">
+                                                                                    <thead>
+                                                                                        <tr>
+                                                                                            <th>S.No</th>
+                                                                                            <th>Regualar Price (₹)</th>
+                                                                                            <th>Retail Price (₹)</th>
+                                                                                            <th>Effective From</th>
+                                                                                            <th>Effection To</th>
+                                                                                            <th>Created At</th>
+                                                                                        </tr>
+                                                                                    </thead>
+                                                                                    <tbody>
+                                                                                        <tr class="highlight-row" ng-repeat="(key,part_price_detail) in $ctrl.part_price_details">
+                                                                                            <td>{{key + 1}}</td>
+                                                                                            <td>{{part_price_detail.regular_price}}</td>
+                                                                                            <td>{{part_price_detail.retail_price}}</td>
+                                                                                            <td>{{part_price_detail.effective_from}}</td>
+                                                                                            <td>{{part_price_detail.effective_to}}</td>
+                                                                                            <td>{{part_price_detail.created_at}}</td>
+                                                                                        </tr>
+                                                                                        <tr ng-if="$ctrl.part_price_details_list_count == 0">
+                                                                                            <td colspan="6" style="text-align: center;">
+                                                                                                No data's found
+                                                                                            </td>
+                                                                                        </tr>
+                                                                                    </tbody>
+                                                                                </table>
+                                                                                <!-- Table -->
+                                                                            </div>
+                                                                            <!-- Responsive -->
+                                                                        </div>
+                                                                        <!-- Column -->
+                                                                    </div>
+                                                                    <!-- Row -->
+                                                                </div>
+                                                            </div><!-- Form Page -->
+                                                        </div>
+                                                        <div class="col-md-12">
+                                                            <div class="tab-pane-footer">
+                                                                <div class="row">
+                                                                    <div class="col-md-12">
+                                                                        <a class="btn btn-primary btn-prev">Previous</a>
+                                                                        <a class="btn btn-bordered btn-nxt">Next</a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div><!-- Tab Pane -->
                                                 <div class="tab-pane fade" id="parts-category" data-animation="fadeInUp" data-animation-delay="300">
                                                     <div class="row">
