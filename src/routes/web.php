@@ -69,5 +69,12 @@ Route::group(['namespace' => 'Abs\PartPkg','middleware' => ['web', 'auth'], 'pre
     //Part categories
     Route::post('/part/category/update', 'PartController@updatePartCategoryDetail')->name('updatePartCategoryDetail');
 
+		//Part Price Details by Rajarajan S on 20-09-2021
+		Route::get('/part-price-detail/get-list', 'PartPriceDetailController@getPartPriceDetailList')->name('getPartPriceDetailList');
+		Route::get('/part-price-detail/get-form-data', 'PartPriceDetailController@getPartPriceDetailFormData')->name('getPartPriceDetailFormData');
+		Route::post('/part-price-detail/save', 'PartPriceDetailController@savePartPriceDetail')->name('savePartPriceDetail');
+		Route::POST('/part-price-detail/get-part-code-data', 'PartPriceDetailController@getPart')->name('getPart');
+		//Part Price Details by Rajarajan S on 20-09-2021
+
 
 });

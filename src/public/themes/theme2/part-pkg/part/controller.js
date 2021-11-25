@@ -222,6 +222,10 @@ app.component('partForm', {
             //For Discount Group by karthick t on 16-09-2020
             self.discount_group_list = response.data.discount_group_list;
             //For Category List By Parthiban V on 23-06-2021
+            //For Part price details by Rajarajan S on 27-09-2021
+            self.part_price_details = response.data.part_price_details;
+            self.part_price_details_list_count = response.data.part_price_details_list_count;
+            //For Part price details by Rajarajan S on 27-09-2021
             self.category_list = response.data.category_list;
             self.part_type_list = response.data.part_type_list;
             $('#alternate_part_ids').val(self.alt_parts_ids.join());
