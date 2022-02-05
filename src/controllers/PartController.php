@@ -46,7 +46,7 @@ class PartController extends Controller {
 			])
 			->leftjoin('uoms', 'uoms.id', 'parts.uom_id')
 			->leftjoin('tax_codes', 'tax_codes.id', 'parts.tax_code_id')
-			// ->where('parts.company_id', Auth::user()->company_id)
+			->where('parts.company_id', Auth::user()->company_id)
 
 			->where(function ($query) use ($request) {
 				if (!empty($request->code)) {
