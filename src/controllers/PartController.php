@@ -336,12 +336,6 @@ class PartController extends Controller {
 			if ($validator->fails()) {
 				return response()->json(['success' => false, 'errors' => $validator->errors()->all()]);
 			}
-
-			if ($request->mrp < $request->list_price) {
-				return response()->json(['success' => false, 'errors' => 'Kindly Enter List Price less then MRP']);
-			} else if ($request->list_price < $request->cost_price) {
-				return response()->json(['success' => false, 'errors' => 'Kindly Enter Cost Price less then List Price']);
-			}
 			// dd($request->all());
 			DB::beginTransaction();
 			if (!$request->id) {
