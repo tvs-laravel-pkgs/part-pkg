@@ -413,6 +413,19 @@
                                                                     <div class="col-md-3">
                                                                         <div class="input-text form-group">
                                                                             <label>
+                                                                                Is Serial Number Opted
+                                                                            </label>
+                                                                            <div class="tab-switch">
+                                                                                <md-switch ng-model="$ctrl.is_serial_no_opted" aria-label="Switch 3" ng-true-value="'No'" ng-false-value="'Yes'" class="md-warn type-2">
+                                                                                    {{ $ctrl.is_serial_no_opted }}
+                                                                                </md-switch>
+                                                                                <input type="hidden" name="is_serial_no_opted" value="{{$ctrl.is_serial_no_opted}}">
+                                                                            </div>
+                                                                        </div><!-- Form Group -->
+                                                                    </div>
+                                                                    <div class="col-md-3">
+                                                                        <div class="input-text form-group">
+                                                                            <label>
                                                                                 Active Status
                                                                                 <sup class="mandatory">*</sup>
                                                                             </label>
