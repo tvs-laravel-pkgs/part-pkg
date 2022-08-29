@@ -87,6 +87,7 @@ class PartPriceDetailController extends Controller
     public function getPart(Request $request){
         if (!empty($request->key)) {
             $part_details = Part::select('id','code','name')
+			->where('company_id', Auth::user()->company_id)
             ->where('code','like','%'.$request->key.'%')->get();
         } else {
 			$part_details = [];
