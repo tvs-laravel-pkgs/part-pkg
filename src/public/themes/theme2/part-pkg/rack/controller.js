@@ -1,6 +1,6 @@
 app.component('rackList', {
     templateUrl: rack_list_template_url,
-    controller: function(HelperService, $rootScope, $routeParams, $scope, $http, $timeout, $location) {
+    controller: function(HelperService, $rootScope, $routeParams, $scope, $http, $timeout, $location, $mdSelect) {
         var self = this;
         self.hasPermission = HelperService.hasPermission;
         var tables = [];
@@ -136,6 +136,11 @@ app.component('rackList', {
                 }
                 $rootScope.loading = false;
             }, 600);
+            $('.modal').bind('click', function(event) {
+                if ($('.md-select-menu-container').hasClass('md-active')) {
+                    $mdSelect.hide();
+                }
+            });
         });
     }
 });
@@ -187,10 +192,10 @@ app.component('rackForm', {
                 'name': {
                     required: true,
                 },
-                'type_id ': {
+                'type_id': {
                     required: true,
                 },
-                'outlet_id ': {
+                'outlet_id': {
                     required: true,
                 },
             },
